@@ -59,6 +59,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     position: absolute;
+    transition: all .5s linear;
 }
 
 img {
@@ -104,4 +105,18 @@ img {
   .fa-linkedin {
     background: #007bb5;
     color: white;
+  }
+
+
+  @media only screen and (max-width: 600px) {
+    .container{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      width:95%;
+  }
   }
