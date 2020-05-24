@@ -1,0 +1,41 @@
+.deleteButton {
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+}
+.deleteButton:hover {
+  background-color: #eeeeee;
+}
+
+.participants {
+  margin-bottom: 15px;
+}
+
+.dotRed {
+  height: 12px;
+  width: 12px;
+  background-color: #ff3535;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dotGreen {
+    height: 12px;
+    width: 12px;
+    background-color: #67922f;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.payoutBanner {
+    background-color: #ffdede;
+    padding:20px;
+}
+
+.closeIcon {
+    cursor: pointer;
+    padding: 5px;
+    position: absolute;
+    right: 30px;
+    margin-top: -5px;
+}

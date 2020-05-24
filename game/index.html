@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gameApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+    <script src="compnent.js"></script>
+</head>
+
+<body>
+    <div ng-controller="gameController as game">
+        <div style="margin: 30px;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="input-group mb-3 form-group">
+                        <input type="text" class="form-control" placeholder="Player Name" ng-model="game.newPlayer">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" ng-click="game.addPlayer(game.newPlayer)">Add Player</button>
+                        </div>
+                    </div>
+                    <div class="participants" ng-repeat="player in game.participants">
+                    <div class="card" style="opacity: {{player.active ? '1' : '0.3'}}">
+                            <span class="closeIcon" style="right: 2px;" ng-click="game.deletePlayer(player)"><i class="fa fa-eye"></i></span>
+                            <div class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
+                                <h5 class="card-title">{{player.name}}</h5>
+                                <div class="row form-group">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <input type="checkbox" ng-model="player.winner" ng-click="game.changeWinner(player)">
+                                                </div>
+                                            </div>
+                                            <input type="number" class="form-control" ng-model="player.points">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="checkShow{{$index}}"
+                                                ng-model="player.show">
+                                            <label class="form-check-label" for="checkShow{{$index}}">Show</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="checkPair{{$index}}"
+                                                ng-model="player.joot" ng-change="game.isPair(player)">
+                                            <label class="form-check-label" for="checkPair{{$index}}">Pair</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        {{player.pay}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action">
+                        <div class="input-group input-group-lg mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button"
+                                    ng-click="game.calculate()">Submit</button>
+                                <button class="btn btn-outline-secondary" type="button"
+                                    ng-click="game.resetInput()">Reset</button>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect03" ng-model="game.multiplier">
+                                <option ng-value=1>Single Game</option>
+                                <option ng-value=2>Dobule Game</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="input-group form-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="file" name="file" accept=".json">
+                            <label class="custom-file-label" for="file">Choose file</label>
+                        </div>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button"
+                                ng-click="game.upload()">Upload</button>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-bottom: 10px;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button"
+                                    ng-click="game.download()">Download</button>
+                                <button class="btn btn-outline-secondary" type="button" ng-click="game.payout()">Payout</button>
+                            </div>
+                            <select class="custom-select" id="inputGroupSelect03">
+                                <option value="1">1 Point | Rs.1</option>
+                                <option value="2">1 Point | Rs.2</option>
+                                <option value="2" selected>1 Point | Rs.5</option>
+                                <option value="2">1 Point | Rs.10</option>
+                                <option value="2">1 Point | Rs.50</option>
+                                <option value="2">1 Point | Rs.100</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="payoutBanner" ng-show="game.payOut && game.payReceive">
+                        {{game.payOut.name}} >> {{game.payReceive.name}} | 100 Points 
+                        <span class="closeIcon" ng-click="game.closePayout()"><i class="fa fa-close"></i></span>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Round</th>
+                                <th ng-repeat="user in game.participants">
+                                    {{user.name}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in game.history">
+                                <td>
+                                    <div class="deleteButton" ng-if="$index === 0" ng-click="game.deleteHistory(item)">
+                                        <i class="fa fa-close"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    {{item.round}}
+                                </td>
+                                <td ng-repeat="player in item.participants"
+                                    style="{{player.winner ? 'background-color: #c3e6cb;' : ''}}">
+                                    {{player.pay}} <span class="{{game.payStatus(player.pay)}}"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
