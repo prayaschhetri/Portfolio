@@ -9,31 +9,37 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
-    <script src="compnent.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 
 <body>
     <div ng-controller="gameController as game">
         <div style="margin: 30px;">
-            <div class="row">
+            <div id="gameControl" class="row" ng-show="!game.viewReport">
                 <div class="col-md-4">
                     <div class="input-group mb-3 form-group">
                         <input type="text" class="form-control" placeholder="Player Name" ng-model="game.newPlayer">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" ng-click="game.addPlayer(game.newPlayer)">Add Player</button>
+                            <button class="btn btn-outline-secondary" type="button"
+                                ng-click="game.addPlayer(game.newPlayer)">Add Player</button>
+                            <button class="btn btn-outline-secondary" type="button"
+                                ng-click="game.drawPlayerChart()">Report</button>
                         </div>
                     </div>
                     <div class="participants" ng-repeat="player in game.participants">
-                    <div class="card" style="opacity: {{player.active ? '1' : '0.3'}}">
-                            <span class="closeIcon" style="right: 2px;" ng-click="game.deletePlayer(player)"><i class="fa fa-eye"></i></span>
-                            <div class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
+                        <div class="card" style="opacity: {{player.active ? '1' : '0.3'}}">
+                            <span class="closeIcon" style="right: 2px;" ng-click="game.deletePlayer(player)"><i
+                                    class="fa fa-eye"></i></span>
+                            <div
+                                class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
                                 <h5 class="card-title">{{player.name}}</h5>
                                 <div class="row form-group">
                                     <div class="col-md-4">
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text">
-                                                    <input type="checkbox" ng-model="player.winner" ng-click="game.changeWinner(player)">
+                                                    <input type="checkbox" ng-model="player.winner"
+                                                        ng-click="game.changeWinner(player)">
                                                 </div>
                                             </div>
                                             <input type="number" class="form-control" ng-model="player.points">
@@ -90,7 +96,8 @@
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary" type="button"
                                     ng-click="game.download()">Download</button>
-                                <button class="btn btn-outline-secondary" type="button" ng-click="game.payout()">Payout</button>
+                                <button class="btn btn-outline-secondary" type="button"
+                                    ng-click="game.payout()">Payout</button>
                             </div>
                             <select class="custom-select" id="inputGroupSelect03">
                                 <option value="1">1 Point | Rs.1</option>
@@ -103,10 +110,10 @@
                         </div>
                     </div>
                     <div class="payoutBanner" ng-show="game.payOut && game.payReceive">
-                        {{game.payOut.name}} >> {{game.payReceive.name}} | 100 Points 
+                        {{game.payOut.name}} >> {{game.payReceive.name}} | 100 Points
                         <span class="closeIcon" ng-click="game.closePayout()"><i class="fa fa-close"></i></span>
                     </div>
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
                                 <th></th>
@@ -135,9 +142,19 @@
                     </table>
                 </div>
             </div>
-
+            <div id="report" style="display: none;">
+                <button class="btn btn-outline-secondary" type="button"
+                                ng-click="game.drawPlayerChart()">Close</button>
+                <div class="row">
+                    <div class="col-md-6" ng-repeat="player in game.participants">
+                        <div id="chart{{player.id}}" style="width: 900px; height: 500px"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <script type="text/javascript" src="chart-service.js"></script>
+    <script src="compnent.js"></script>
 </body>
 
 </html>
