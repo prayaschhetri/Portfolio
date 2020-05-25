@@ -15,7 +15,7 @@
 <body>
     <div ng-controller="gameController as game">
         <div style="margin: 30px;">
-            <div id="gameControl" class="row" ng-show="!game.viewReport">
+            <div id="gameControl" class="row fade-in" ng-show="!game.viewReport">
                 <div class="col-md-4">
                     <div class="input-group mb-3 form-group">
                         <input type="text" class="form-control" placeholder="Player Name" ng-model="game.newPlayer">
@@ -142,7 +142,7 @@
                     </table>
                 </div>
             </div>
-            <div id="report" style="display: none;">
+            <div id="report" class="fade-in" style="display: none;">
                 <button class="btn btn-outline-secondary" type="button"
                                 ng-click="game.drawPlayerChart()">Close</button>
                 <div class="row">
