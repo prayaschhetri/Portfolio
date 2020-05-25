@@ -4,7 +4,9 @@ app.controller('gameController', function ($scope) {
     var game = this;
     game.payOut = null;
     game.payReceive = null;
+    game.displayPayments = [];
     game.participants = [];
+    game.payments = [];
     game.newPlayer = '';
     game.history = [];
     game.multiplier = 1;
@@ -48,54 +50,13 @@ app.controller('gameController', function ($scope) {
         }
     }
 
-    game.payout = function () {
-
-        var count = 0;
-        var payRecieve = null;
-        var payOut = null;
-        for (i = game.history.length - 1; i >= 0; i = i - 1) {
-            var pgame = game.history[i];
-            pgame.participants.forEach(player => {
-                if (payOut === null && player.pay <= -100) {
-                    payOut = player;
-                } else if (payRecieve === null && player.pay >= 100) {
-                    payRecieve = player;
-                }
-            });
-        }
-
-        if (!payRecieve || !payOut) {
-            alert("No one to pay/receive");
-        } else {
-            for (i = game.history.length - 1; i >= 0; i = i - 1) {
-                var pgame = game.history[i];
-                pgame.participants.forEach(player => {
-                    if (payRecieve != null && player.pay >= 100) {
-                        if (player.id === payRecieve.id) {
-                            player.pay = player.pay - 100;
-                        }
-                    }
-
-                    if (payOut != null && player.pay <= -100) {
-                        if (player.id === payOut.id) {
-                            player.pay = player.pay + 100;
-                        }
-                    }
-                });
-            }
-
-            game.payOut = payOut;
-            game.payReceive = payRecieve;
-        }
-
-    }
-
-    game.closePayout = function () {
-        game.payOut = null;
-        game.payReceive = null;
+    game.closePayout = function (payment) {
+        game.displayPayments = game.displayPayments.filter(obj => obj != payment);
     }
 
     game.calculate = function () {
+        var payout = false;
+        var payusers = [];
         var activePlayers = game.participants.filter(obj => obj.active == true);
         if (activePlayers.length > 1) {
             var totalPoints = 0;
@@ -178,6 +139,12 @@ app.controller('gameController', function ($scope) {
                                     if (lastPlayer != null && lastPlayer.length > 0) {
                                         lastPlayer = lastPlayer[0];
                                         currentPlayer.pay = currentPlayer.pay + lastPlayer.pay;
+
+                                        if(currentPlayer.pay <= -100) {
+                                            payout = true;
+                                            payusers.push(currentPlayer);
+                                            currentPlayer.pay = currentPlayer.pay + 100;
+                                        }
                                     }
                                 }
                             }
@@ -186,7 +153,45 @@ app.controller('gameController', function ($scope) {
                 }
 
                 report.date = Date.now();
+                report.payments = [];
+                //payments
+                if(payout == true && payusers.length > 0) {
+                    payusers.forEach(payuser => {
+                        //get receiving player
+                        highestPoint = 0;
+                        highestPointUser = null;
+                        report.participants.forEach(user => {
+                            if(user.pay > highestPoint){
+                                highestPoint = user.pay;
+                                highestPointUser = user;
+                            }
+                        });
+
+                        if(highestPointUser != null) {
+                            highestPointUser.pay = highestPointUser.pay - 100;
+                            var displayPayment = {
+                                pay: payuser,
+                                receive: highestPointUser,
+                            }
+                            game.displayPayments.push(displayPayment);
+                            var paymentPay = {
+                                round: report.round,
+                                user: payuser,
+                                points: -100,
+                            }
+                            var paymentReceive = {
+                                round: report.round,
+                                user: highestPointUser,
+                                points: 100,
+                            }    
+                            report.payments.push(paymentPay);
+                            report.payments.push(paymentReceive);                        
+                        }
+                    });
+                }
+
                 game.history.unshift(report);
+
             } else {
                 alert("Invalid Winner");
             }

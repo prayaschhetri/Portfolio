@@ -96,8 +96,6 @@
                             <div class="input-group-prepend">
                                 <button class="btn btn-outline-secondary" type="button"
                                     ng-click="game.download()">Download</button>
-                                <button class="btn btn-outline-secondary" type="button"
-                                    ng-click="game.payout()">Payout</button>
                             </div>
                             <select class="custom-select" id="inputGroupSelect03">
                                 <option value="1">1 Point | Rs.1</option>
@@ -109,9 +107,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="payoutBanner" ng-show="game.payOut && game.payReceive">
-                        {{game.payOut.name}} >> {{game.payReceive.name}} | 100 Points
-                        <span class="closeIcon" ng-click="game.closePayout()"><i class="fa fa-close"></i></span>
+                    <div class="payoutBanner" ng-repeat="payment in game.displayPayments">
+                        {{payment.pay.name}} >> {{payment.receive.name}} | 100 Points
+                        <span class="closeIcon" ng-click="game.closePayout(payment)"><i class="fa fa-close"></i></span>
                     </div>
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
