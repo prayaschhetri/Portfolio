@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/AlphaGit/ng-pattern-restrict/master/src/ng-pattern-restrict.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
@@ -102,7 +103,7 @@
                                         <div class="row">
                                             <div class="col-md-4 form-group">
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" ng-model="player.points"
+                                                    <input type="number" class="form-control" ng-model="player.points" min='0' max='200' step='1'
                                                         ng-change="game.changePoints(player)">
                                                 </div>
                                             </div>
@@ -206,7 +207,7 @@
                         </div>
                         <div id="scoreBoard" class="collapse show">                            
                             <div class="card-body">
-                                <table class="table table-bordered table-striped table-hover fade-in">
+                                <table class="table table-bordered table-hover fade-in">
                                     <thead>
                                         <tr>
                                             <th style="width: 40px; text-align:right;"></th>

@@ -1,4 +1,4 @@
-var app = angular.module("gameApp", []);
+var app = angular.module("gameApp", ['ngPatternRestrict']);
 
 app.controller('gameController', function ($scope) {
     var game = this;
@@ -45,6 +45,16 @@ app.controller('gameController', function ($scope) {
     game.changePoints = function (item) {
         if (item.points > 0) {
             item.show = true;
+        }
+
+        var haveWinner = false;
+        game.participants.forEach(player => {
+            if(player.winner == true) {
+                haveWinner = true;
+            } 
+        });
+        if(!haveWinner) {
+            item.winner = true;
         }
     }
 
