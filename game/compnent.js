@@ -8,12 +8,15 @@ app.controller('gameController', function ($scope) {
     game.participants = [];
     game.payments = [];
     game.newPlayer = '';
-    game.history = [];
+    game.history = {
+        data: [],
+        payments: []
+    };
     game.multiplier = 1;
     game.viewReport = false;
 
     game.deleteHistory = function (item) {
-        game.history = game.history.filter(obj => obj !== item);
+        game.history.data = game.history.data.filter(obj => obj !== item);
     }
 
     game.changeWinner = function (item) {
@@ -110,7 +113,7 @@ app.controller('gameController', function ($scope) {
 
                 winner.pay = winnerPay * -1;
                 var report = {
-                    round: game.history.length + 1,
+                    round: game.history.data.length + 1,
                     totalPoints: totalPoints,
                     participants: []
                 }
@@ -129,8 +132,8 @@ app.controller('gameController', function ($scope) {
                     report.participants.push(playerReport);
                 });
 
-                if (game.history && game.history.length > 0) {
-                    var lastGame = game.history[0];
+                if (game.history && game.history.data && game.history.data.length > 0) {
+                    var lastGame = game.history.data[0];
                     if (lastGame) {
                         report.participants.forEach(currentPlayer => {
                             if (currentPlayer.active) {
@@ -140,7 +143,7 @@ app.controller('gameController', function ($scope) {
                                         lastPlayer = lastPlayer[0];
                                         currentPlayer.pay = currentPlayer.pay + lastPlayer.pay;
 
-                                        if(currentPlayer.pay <= -100) {
+                                        if (currentPlayer.pay <= -100) {
                                             payout = true;
                                             payusers.push(currentPlayer);
                                             currentPlayer.pay = currentPlayer.pay + 100;
@@ -153,21 +156,20 @@ app.controller('gameController', function ($scope) {
                 }
 
                 report.date = Date.now();
-                report.payments = [];
                 //payments
-                if(payout == true && payusers.length > 0) {
+                if (payout == true && payusers.length > 0) {
                     payusers.forEach(payuser => {
                         //get receiving player
                         highestPoint = 0;
                         highestPointUser = null;
                         report.participants.forEach(user => {
-                            if(user.pay > highestPoint){
+                            if (user.pay > highestPoint) {
                                 highestPoint = user.pay;
                                 highestPointUser = user;
                             }
                         });
 
-                        if(highestPointUser != null) {
+                        if (highestPointUser != null) {
                             highestPointUser.pay = highestPointUser.pay - 100;
                             var displayPayment = {
                                 pay: payuser,
@@ -178,19 +180,24 @@ app.controller('gameController', function ($scope) {
                                 round: report.round,
                                 user: payuser,
                                 points: -100,
+                                date: Date.now()
                             }
                             var paymentReceive = {
                                 round: report.round,
                                 user: highestPointUser,
                                 points: 100,
-                            }    
-                            report.payments.push(paymentPay);
-                            report.payments.push(paymentReceive);                        
+                                date: Date.now()
+                            }
+                            if (game.history.payments == null || game.history.payments == undefined) {
+                                game.history.payments = [];
+                            }
+                            game.history.payments.push(paymentPay);
+                            game.history.payments.push(paymentReceive);
                         }
                     });
                 }
 
-                game.history.unshift(report);
+                game.history.data.unshift(report);
 
             } else {
                 alert("Invalid Winner");
@@ -235,14 +242,30 @@ app.controller('gameController', function ($scope) {
     }
 
     game.upload = function () {
-        game.history = [];
+        game.history = {
+            data: [],
+            payments: []
+        };
         var f = document.getElementById('file').files[0],
             r = new FileReader();
 
         r.onloadend = function (e) {
             var data = e.target.result;
             var parsedData = JSON.parse(data);
-            parsedData.forEach(pdata => {
+            var payments = [];
+            if (parsedData.payments != null || parsedData.payments != undefined) {
+                parsedData.payments.forEach(payment => {
+                    var pay = {
+                        round: payment.round,
+                        user: payment.user,
+                        points: payment.points,
+                        date: payment.date
+                    }
+                    payments.push(pay);
+                });
+                game.history.payments = payments;
+            }
+            parsedData.data.forEach(pdata => {
 
                 var hparticipants = [];
                 pdata.participants.forEach(hplayer => {
@@ -263,9 +286,9 @@ app.controller('gameController', function ($scope) {
                     totalPoints: pdata.totalPoints,
                     participants: hparticipants,
                 }
-                game.history.push(history);
+                game.history.data.push(history);
             });
-            var lastGame = game.history[0];
+            var lastGame = game.history.data[0];
             game.participants = [];
             lastGame.participants.forEach(player => {
                 var newPlayer = {
@@ -295,85 +318,49 @@ app.controller('gameController', function ($scope) {
         } else {
             x.style.display = "none";
         }
-        
+
         if (!game.viewReport) {
             game.viewReport = true;
             game.participants.forEach(player => {
                 var playerData = [];
-                if (game.history != null && game.history.length > 0) {
-                    game.history.forEach(game => {
+                if (game.history.payments != null && game.history.payments.length > 0) {
+                    pdata = game.history.payments.filter(obj => obj.user.id == player.id);
 
-                        var pay = 0;
-                        var user = game.participants.filter(obj => obj.id == player.id);
-                        if (user.length > 0) {
-                            user = user[0];
-                            pay = user.pay;
-                        }
+                    var tempData = [];
+                    if (pdata.length > 0) {
+                        pdata.forEach(element => {
+                            var dt = new Date(element.date);
+                            var d = {
+                                date: dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDay(),
+                                points: element.points
+                            }
+                            tempData.push(d);
+                        });
+                    }
 
-                        var row = [
-                            game.round,
-                            pay
-                        ];
+                    let array = tempData,
+                        result = Object.values(array.reduce((a, { date, points }) => {
+                            a[date] = (a[date] || { date, points: 0 });
+                            a[date].points = Number(a[date].points) + Number(points);
+                            return a;
+                        }, {}));
 
-                        playerData.push(row);
-                    });
+                    if (result.length > 0) {
+                        result.forEach(game => {
+                            var dt = new Date(game.date);
+                            var row = [
+                                new Date(dt.getFullYear(), dt.getMonth()),
+                                game.points
+                            ];
+
+                            playerData.push(row);
+                        });
+                    }
                 }
-
-                console.log(playerData);
                 drawChart(player, playerData);
             });
         } else {
             game.viewReport = false;
         }
-
-
-        //console.log(player);
-        //drawChart("chart"+ player.id);
-
-        // var playerData = {
-        //     cols: [],
-        //     rows: []
-        // };
-        // if(game.history != null && game.history.length > 0) {
-
-        //     game.history.forEach(game => {
-        //         playerData.cols.push(game.round);
-        //         var user = game.participants.filter(obj => obj.id == player.id);
-        //         if(user.length > 0) {
-        //             user = user[0];
-        //             playerData.rows.push();
-        //             playerData = {"cols": [
-        //                 {id: "month", label: "Month", type: "string"},
-        //                 {id: "laptop-id", label: "Laptop", type: "number"},
-        //                 {id: "desktop-id", label: "Desktop", type: "number"},
-        //                 {id: "server-id", label: "Server", type: "number"},
-        //                 {id: "cost-id", label: "Shipping", type: "number"}
-        //             ], "rows": [
-        //                 {c: [
-        //                     {v: "January"},
-        //                     {v: 19, f: "42 items"},
-        //                     {v: 12, f: "Ony 12 items"},
-        //                     {v: 7, f: "7 servers"},
-        //                     {v: 4}
-        //                 ]},
-        //                 {c: [
-        //                     {v: "February"},
-        //                     {v: 13},
-        //                     {v: 1, f: "1 unit (Out of stock this month)"},
-        //                     {v: 12},
-        //                     {v: 2}
-        //                 ]},
-        //                 {c: [
-        //                     {v: "March"},
-        //                     {v: 24},
-        //                     {v: 0},
-        //                     {v: 11},
-        //                     {v: 6}
-
-        //                 ]}
-        //             ]};
-        //         }
-        //     });
-        // }
     }
 });

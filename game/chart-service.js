@@ -4,7 +4,7 @@ function drawChart(player, playerData) {
     if (player.id != undefined || player.id !== null || player.id != '') {
 
         var data = new google.visualization.DataTable();
-        data.addColumn('number', 'Rounds');
+        data.addColumn('date', 'Date');
         data.addColumn('number', 'Points');
         data.addRows(playerData);
 
@@ -13,8 +13,6 @@ function drawChart(player, playerData) {
             curveType: 'function',
             vAxis:{
                 title:"Points",
-                minValue:-200,
-                maxValue:200,
                 textPosition: 'left',
             }
         };
