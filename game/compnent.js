@@ -32,6 +32,7 @@ app.controller('gameController', function ($scope) {
         if(item.joot == true) {
             item.joot = false
         }
+        item.points = 0;
     }
 
     game.isPair = function (player) {
@@ -52,7 +53,7 @@ app.controller('gameController', function ($scope) {
                 id: game.participants.length + 1,
                 name: name,
                 winner: false,
-                show: true,
+                show: false,
                 joot: false,
                 points: 0,
                 pay: 0,
