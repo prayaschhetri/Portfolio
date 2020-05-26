@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 
@@ -17,28 +23,67 @@
     <div ng-controller="gameController as game">
         <div style="margin: 30px;">
             <div id="gameControl" class="row fade-in" ng-show="!game.viewReport">
-                <div class="col-md-4">
-                    <div class="input-group form-group">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="file" name="file" accept=".json">
-                            <label class="custom-file-label" for="file">Choose file</label>
+                <div class="col-md-4 form-group">
+                    <div id="tools" class="card">
+                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+                            style="cursor: pointer;">
+                            <h5 class="mb-0">
+                                Tools
+                            </h5>
                         </div>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button"
-                                ng-click="game.upload()">Open</button>
-                            <button class="btn btn-outline-secondary" type="button" ng-if="game.history.data.length > 0"
-                                ng-click="game.download()">Save</button>
-                            <button class="btn btn-outline-secondary" type="button" ng-if="game.history.data.length > 0"
-                                ng-click="game.drawPlayerChart()">Report</button>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 form-group">
+                                        <div class="input-group form-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="file" name="file"
+                                                    accept=".json">
+                                                <label class="custom-file-label" for="file">Choose file</label>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-click="game.upload()">Open</button>
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-if="game.history.data.length > 0"
+                                                    ng-click="game.download()">Save</button>
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-if="game.history.data.length > 0"
+                                                    ng-click="game.drawPlayerChart()">Report</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div id="multiplierThreshold">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon3">Game
+                                                        Multiplier</span>
+                                                </div>
+                                                <input type="number" class="form-control"
+                                                    ng-model="game.multiplierThreshold">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Points</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div class="input-group mb-3 form-group">
+                                            <input type="text" class="form-control" placeholder="Player Name"
+                                                ng-model="game.newPlayer">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-click="game.addPlayer(game.newPlayer)">Add Player</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-group mb-3 form-group">
-                        <input type="text" class="form-control" placeholder="Player Name" ng-model="game.newPlayer">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button"
-                                ng-click="game.addPlayer(game.newPlayer)">Add Player</button>
-                        </div>
-                    </div>
+                    <br>
                     <div class="participants fade-in" ng-repeat="player in game.participants">
                         <div class="card" style="opacity: {{player.active ? '1' : '0.3'}}">
                             <span class="closeIcon" style="right: 2px;" ng-click="game.deletePlayer(player)">
@@ -46,34 +91,44 @@
                             </span>
                             <div
                                 class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
-                                <div class="custom-control custom-checkbox custom-control-inline mb-3">
-                                    <input type="checkbox" class="custom-control-input" id="player{{$index}}"
-                                        ng-model="player.winner" ng-click="game.changeWinner(player)">
-                                    <label style="font-weight: bold;" class="custom-control-label"
-                                        for="player{{$index}}">{{player.name}}</label>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                                            <input type="number" class="form-control" ng-model="player.points"
-                                                ng-change="game.changePoints(player)">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                            <input type="checkbox" class="custom-control-input" id="player{{$index}}"
+                                                ng-model="player.winner" ng-click="game.changeWinner(player)">
+                                            <label style="font-weight: bold;" class="custom-control-label"
+                                                for="player{{$index}}">{{player.name}}</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 form-group">
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" ng-model="player.points"
+                                                        ng-change="game.changePoints(player)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 form-group">
+                                                <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                        id="checkShow{{$index}}" ng-model="player.show"
+                                                        ng-change="game.changeShow(player)">
+                                                    <label class="custom-control-label"
+                                                        for="checkShow{{$index}}">Show</label>
+                                                </div>
+                                                <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                        id="checkPair{{$index}}" ng-model="player.joot"
+                                                        ng-change="game.isPair(player)">
+                                                    <label class="custom-control-label" for="checkPair{{$index}}">Joot
+                                                        Show</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="custom-control custom-checkbox custom-control-inline mb-3">
-                                            <input type="checkbox" class="custom-control-input" id="checkShow{{$index}}"
-                                                ng-model="player.show" ng-change="game.changeShow(player)">
-                                            <label class="custom-control-label" for="checkShow{{$index}}">Show</label>
+                                    <div class="col-md-3">
+                                        <div ng-if="player.pay !== 0"
+                                            style="font-size: 42px; text-align: right; white-space: nowrap;">
+                                            {{player.pay}}
                                         </div>
-                                        <div class="custom-control custom-checkbox custom-control-inline mb-3">
-                                            <input type="checkbox" class="custom-control-input" id="checkPair{{$index}}"
-                                                ng-model="player.joot" ng-change="game.isPair(player)">
-                                            <label class="custom-control-label" for="checkPair{{$index}}">Joot
-                                                Show</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2" ng-if="player.pay !== 0">
-                                        {{player.pay}}
                                     </div>
                                 </div>
                             </div>
@@ -82,9 +137,9 @@
                     <div class="action fade-in" ng-if="game.participants.length > 1">
                         <div class="input-group input-group-lg mb-3">
                             <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary" type="button"
+                                <button class="btn btn-outline-primary" type="button"
                                     ng-click="game.calculate()">Submit</button>
-                                <button class="btn btn-outline-secondary" type="button"
+                                <button class="btn btn-outline-danger" type="button"
                                     ng-click="game.resetInput()">Reset</button>
                             </div>
                             <select class="custom-select" id="inputGroupSelect03" ng-model="game.multiplier">
@@ -93,39 +148,6 @@
                             </select>
                         </div>
                     </div>
-                    <div id="payments fade-in" ng-if="game.participants.length > 1">
-                        <table class="table table-bordered table-striped fade-in">
-                            <caption style="caption-side: top;">
-                                Payments
-                            </caption>
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Date
-                                    </th>
-                                    <th>
-                                        Player
-                                    </th>
-                                    <th>
-                                        Points
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="payment in game.history.payments">
-                                    <td>
-                                        {{payment.date | date}}
-                                    </td>
-                                    <td>
-                                        {{payment.user.name}}
-                                    </td>
-                                    <td>
-                                        {{payment.points}}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
 
                 <div class="col-md-8">
@@ -133,38 +155,87 @@
                         {{payment.pay.name}} >> {{payment.receive.name}} | 100 Points
                         <span class="closeIcon" ng-click="game.closePayout(payment)"><i class="fa fa-close"></i></span>
                     </div>
-                    <div id="score fade-in" ng-if="game.history.data.length > 0">
-                        <table class="table table-bordered table-striped table-hover fade-in">
-                            <caption style="caption-side: top;">
+
+                    <div id="paymentsdiv" class="card" ng-if="game.participants.length > 1">
+                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#payments"
+                            style="cursor: pointer;">
+                            <h5 class="mb-0">
+                                Payments
+                            </h5>
+                        </div>
+                        <div id="payments" class="collapse show">                            
+                            <div class="card-body">
+                                <table class="table table-bordered table-striped fade-in">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Date
+                                            </th>
+                                            <th>
+                                                Player
+                                            </th>
+                                            <th>
+                                                Points
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="payment in game.history.payments">
+                                            <td>
+                                                {{payment.date | date}}
+                                            </td>
+                                            <td>
+                                                {{payment.user.name}}
+                                            </td>
+                                            <td>
+                                                {{payment.points}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div id="scoreBoardDiv" class="card" ng-if="game.history.data.length > 0">
+                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#scoreBoard"
+                            style="cursor: pointer;">
+                            <h5 class="mb-0">
                                 Score Board
-                            </caption>
-                            <thead>
-                                <tr>
-                                    <th style="width: 40px;"></th>
-                                    <th style="width: 40px;">Round</th>
-                                    <th ng-repeat="user in game.participants">
-                                        {{user.name}}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="item in game.history.data">
-                                    <td>
-                                        <div class="deleteButton" ng-if="$index === 0"
-                                            ng-click="game.deleteHistory(item)">
-                                            <i class="fa fa-close"></i>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {{item.round}}
-                                    </td>
-                                    <td ng-repeat="player in item.participants"
-                                        style="{{player.winner ? 'background-color: #c3e6cb;' : ''}}">
-                                        {{player.pay}} <span class="{{game.payStatus(player.pay)}}"></span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            </h5>
+                        </div>
+                        <div id="scoreBoard" class="collapse show">                            
+                            <div class="card-body">
+                                <table class="table table-bordered table-striped table-hover fade-in">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 40px; text-align:right;"></th>
+                                            <th style="width: 40px; text-align:right;">Round</th>
+                                            <th ng-repeat="user in game.participants" style="text-align:right;">
+                                                {{user.name}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in game.history.data">
+                                            <td>
+                                                <div class="deleteButton" ng-if="$index === 0"
+                                                    ng-click="game.deleteHistory(item)">
+                                                    <i class="fa fa-close"></i>
+                                                </div>
+                                            </td>
+                                            <td style="font-size: 24px; text-align:right;">
+                                                {{item.round}}
+                                            </td>
+                                            <td ng-repeat="player in item.participants"
+                                                style="{{player.winner ? 'background-color: #c3e6cb;' : ''}}; font-size:24px; text-align:right;">
+                                                {{player.pay}} <span class="{{game.payStatus(player.pay)}}"></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@ var app = angular.module("gameApp", []);
 
 app.controller('gameController', function ($scope) {
     var game = this;
+    game.multiplierThreshold = 25;
     game.payOut = null;
     game.payReceive = null;
     game.displayPayments = [];
@@ -28,8 +29,8 @@ app.controller('gameController', function ($scope) {
         });
     }
 
-    game.changeShow = function(item) {
-        if(item.joot == true) {
+    game.changeShow = function (item) {
+        if (item.joot == true) {
             item.joot = false
         }
         item.points = 0;
@@ -41,8 +42,8 @@ app.controller('gameController', function ($scope) {
         }
     }
 
-    game.changePoints = function(item) {
-        if(item.points > 0) {
+    game.changePoints = function (item) {
+        if (item.points > 0) {
             item.show = true;
         }
     }
@@ -217,6 +218,23 @@ app.controller('gameController', function ($scope) {
                 }
 
                 game.history.data.unshift(report);
+
+                //multiplier
+                if (game.multiplierThreshold > 0) {
+                    var multiplied = false;
+                    game.participants.forEach(player => {
+                        if (player.points >= game.multiplierThreshold) {
+                            multiplied = true;
+                        }
+                    });
+                    if (multiplied) {
+                        game.multiplier = 2;
+                    }
+                    else {
+                        game.multiplier = 1;
+                    }
+                }
+
 
             } else {
                 alert("Invalid Winner");
