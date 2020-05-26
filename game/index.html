@@ -29,33 +29,37 @@
                     </div>
                     <div class="participants" ng-repeat="player in game.participants">
                         <div class="card" style="opacity: {{player.active ? '1' : '0.3'}}">
-                            <span class="closeIcon" style="right: 2px;" ng-click="game.deletePlayer(player)"><i
-                                    class="fa fa-eye"></i></span>
-                            <div
-                                class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
-                                <h5 class="card-title">{{player.name}}</h5>
+                            <span class="closeIcon" style="right: 2px;" ng-click="game.deletePlayer(player)">
+                                <i class="fa fa-eye"></i>
+                            </span>
+                            <div class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
+                                <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                    <input type="checkbox" class="custom-control-input" id="player{{$index}}" ng-model="player.winner" ng-click="game.changeWinner(player)">
+                                    <label style="font-weight: bold;" class="custom-control-label" for="player{{$index}}">{{player.name}}</label>
+                                </div>
                                 <div class="row form-group">
                                     <div class="col-md-4">
                                         <div class="input-group">
-                                            <div class="input-group-prepend">
+                                            <!-- <div class="input-group-prepend">
                                                 <div class="input-group-text">
                                                     <input type="checkbox" ng-model="player.winner"
                                                         ng-click="game.changeWinner(player)">
                                                 </div>
-                                            </div>
-                                            <input type="number" class="form-control" ng-model="player.points">
+                                            </div> -->
+                                            <input type="number" class="form-control" ng-model="player.points"
+                                                ng-change="game.changePoints(player)">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="checkShow{{$index}}"
-                                                ng-model="player.show">
-                                            <label class="form-check-label" for="checkShow{{$index}}">Show</label>
+                                        <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                            <input type="checkbox" class="custom-control-input" id="checkShow{{$index}}"
+                                                ng-model="player.show" ng-change="game.changeShow(player)">
+                                            <label class="custom-control-label" for="checkShow{{$index}}">Show</label>
                                         </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="checkPair{{$index}}"
+                                        <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                            <input type="checkbox" class="custom-control-input" id="checkPair{{$index}}"
                                                 ng-model="player.joot" ng-change="game.isPair(player)">
-                                            <label class="form-check-label" for="checkPair{{$index}}">Pair</label>
+                                            <label class="custom-control-label" for="checkPair{{$index}}">Joot Show</label>
                                         </div>
                                     </div>
                                     <div class="col-md-2" ng-if="player.pay !== 0">
@@ -115,8 +119,8 @@
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th>Round</th>
+                                <th style="width: 40px;"></th>
+                                <th style="width: 40px;">Round</th>
                                 <th ng-repeat="user in game.participants">
                                     {{user.name}}
                                 </th>

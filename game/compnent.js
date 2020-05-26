@@ -28,6 +28,24 @@ app.controller('gameController', function ($scope) {
         });
     }
 
+    game.changeShow = function(item) {
+        if(item.joot == true) {
+            item.joot = false
+        }
+    }
+
+    game.isPair = function (player) {
+        if (player.joot) {
+            player.show = true;
+        }
+    }
+
+    game.changePoints = function(item) {
+        if(item.points > 0) {
+            item.show = true;
+        }
+    }
+
     game.addPlayer = function (name) {
         if (name != '') {
             const newPlayer = {
@@ -215,12 +233,6 @@ app.controller('gameController', function ($scope) {
             player.joot = false;
             player.pay = 0;
         });
-    }
-
-    game.isPair = function (player) {
-        if (player.joot) {
-            player.show = true;
-        }
     }
 
     game.download = function () {
