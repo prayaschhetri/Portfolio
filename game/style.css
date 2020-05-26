@@ -20,24 +20,24 @@
 }
 
 .dotGreen {
-    height: 12px;
-    width: 12px;
-    background-color: #67922f;
-    border-radius: 50%;
-    display: inline-block;
+  height: 12px;
+  width: 12px;
+  background-color: #67922f;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 .payoutBanner {
-    background-color: #ffdede;
-    padding:20px;
+  background-color: #ffdede;
+  padding: 20px;
 }
 
 .closeIcon {
-    cursor: pointer;
-    padding: 5px;
-    position: absolute;
-    right: 30px;
-    margin-top: -5px;
+  cursor: pointer;
+  padding: 5px;
+  position: absolute;
+  right: 30px;
+  margin-top: -5px;
 }
 
 .fade-in {
@@ -46,28 +46,63 @@
   -moz-animation: fadeIn ease 1s;
   -o-animation: fadeIn ease 1s;
   -ms-animation: fadeIn ease 1s;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
   }
-  @keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  100% {
+    opacity: 1;
   }
-  
-  @-moz-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+}
+
+@-moz-keyframes fadeIn {
+  0% {
+    opacity: 0;
   }
-  
-  @-webkit-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  100% {
+    opacity: 1;
   }
-  
-  @-o-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
   }
-  
-  @-ms-keyframes fadeIn {
-  0% {opacity:0;}
-  100% {opacity:1;}
+  100% {
+    opacity: 1;
   }
+}
+
+@-o-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.double-multiplier {
+  font-weight: bold !important;
+  /* animation: color-change 0.3s infinite; */
+  animation: color-change 0.5s linear 0s infinite;
+}
+
+@keyframes color-change {
+  0% {
+    color: black;
+  }
+  100% {
+    color: #eeeeee;
+  }
+}

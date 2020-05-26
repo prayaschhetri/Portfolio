@@ -143,9 +143,9 @@
                                 <button class="btn btn-outline-danger" type="button"
                                     ng-click="game.resetInput()">Reset</button>
                             </div>
-                            <select class="custom-select" id="inputGroupSelect03" ng-model="game.multiplier">
-                                <option ng-value=1>Single Game</option>
-                                <option ng-value=2>Dobule Game</option>
+                            <select class="custom-select {{game.multiplier == 2 ? 'double-multiplier' : ''}}" id="inputGroupSelect03" ng-model="game.multiplier">
+                                <option ng-value=1>1x Multiplier</option>
+                                <option ng-value=2>2x Multiplier</option>
                             </select>
                         </div>
                     </div>

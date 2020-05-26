@@ -43,7 +43,9 @@ app.controller('gameController', function ($scope) {
     }
 
     game.changePoints = function (item) {
-        if (item.points > 0) {
+        if(item.points === 0) {
+            item.points = null;
+        } else if (item.points > 0) {
             item.show = true;
         }
 
@@ -66,7 +68,7 @@ app.controller('gameController', function ($scope) {
                 winner: false,
                 show: false,
                 joot: false,
-                points: 0,
+                points: null,
                 pay: 0,
                 active: true,
             }
@@ -256,7 +258,7 @@ app.controller('gameController', function ($scope) {
 
     game.resetInput = function () {
         game.participants.forEach(player => {
-            player.points = 0;
+            player.points = null;
             player.winner = false;
             player.show = false;
             player.joot = false;
@@ -339,7 +341,7 @@ app.controller('gameController', function ($scope) {
                     winner: false,
                     show: false,
                     joot: false,
-                    points: 0,
+                    points: null,
                     pay: 0,
                     active: true,
                 }
