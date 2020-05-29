@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gameApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script> -->
+    <script type="text/javascript"
+        src="https://cdn.rawgit.com/AlphaGit/ng-pattern-restrict/master/src/ng-pattern-restrict.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="sortable.js"></script>
+    <script data-require="jquery" data-semver="2.1.1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script data-require="jqueryui" data-semver="1.10.0"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.js"></script>
+</head>
+
+<body>
+    <div ng-controller="gameController as game">
+        <div style="margin: 30px;">
+            <div id="gameControl" class="row fade-in" ng-show="!game.viewReport">
+                <div class="col-md-4 form-group">
+                    <div id="tools" class="card">
+                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+                            style="cursor: pointer;">
+                            <h5 class="mb-0">
+                                Tools
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 form-group">
+                                        <div class="input-group form-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="file" name="file"
+                                                    accept=".json">
+                                                <label class="custom-file-label" for="file">Choose file</label>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-click="game.upload()">Open</button>
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-if="game.data.records.length > 0"
+                                                    ng-click="game.download()">Save</button>
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-if="game.data.records.length > 0"
+                                                    ng-click="game.drawPlayerChart()">Report</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div id="multiplierThreshold">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon3">Game
+                                                        Multiplier</span>
+                                                </div>
+                                                <input type="number" class="form-control"
+                                                    ng-model="game.data.multiplierThreshold">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Points</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div id="multiplierThreshold">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon3">Payout</span>
+                                                </div>
+                                                <input type="number" class="form-control"
+                                                    ng-model="game.data.payinterval">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Points</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
+                                        <div class="input-group mb-3 form-group">
+                                            <input type="text" class="form-control" placeholder="Player Name"
+                                                ng-model="game.newPlayer">
+                                            <input type="number" class="form-control" placeholder="Points"
+                                                ng-model="game.initialPoint">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    ng-click="game.addPlayer(game.newPlayer, game.initialPoint)">Add
+                                                    Player</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div id="participantsDiv" class="fade-in" ui-sortable ng-model="game.data.participants">
+                        <div class="participants {{player.dealer ? 'dealer' : ''}}"
+                            ng-repeat="player in game.data.participants">
+                            <div class="card" style="opacity: {{player.active ? '1' : '0.3'}}">
+                                <span class="closeIcon" style="right: 2px;" ng-click="game.deletePlayer(player)"
+                                    title="Active/Inactive">
+                                    <i class="fa fa-eye"></i>
+                                </span>
+                                <span class="closeIcon" style="right: 24px;" ng-click="game.changeDealer(player)"
+                                    title="Dealer">
+                                    <i class="fa fa-gavel"></i>
+                                </span>
+                                <div
+                                    class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                <input type="checkbox" class="custom-control-input"
+                                                    id="player{{$index}}" ng-model="player.winner"
+                                                    ng-click="game.changeWinner(player)">
+                                                <label style="font-weight: bold;" class="custom-control-label"
+                                                    for="player{{$index}}">{{player.name}}</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4 form-group">
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control"
+                                                            ng-model="player.points" min='0' max='200' step='1'
+                                                            ng-change="game.changePoints(player)">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8 form-group">
+                                                    <div
+                                                        class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="checkShow{{$index}}" ng-model="player.show"
+                                                            ng-change="game.changeShow(player)">
+                                                        <label class="custom-control-label"
+                                                            for="checkShow{{$index}}">Show</label>
+                                                    </div>
+                                                    <div
+                                                        class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="checkPair{{$index}}" ng-model="player.joot"
+                                                            ng-change="game.isPair(player)">
+                                                        <label class="custom-control-label"
+                                                            for="checkPair{{$index}}">Joot
+                                                            Show</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div ng-if="player.pay !== 0"
+                                                style="font-size: 42px; text-align: right; white-space: nowrap;">
+                                                {{player.pay}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action fade-in" ng-if="game.data.participants.length > 1">
+                        <div class="input-group input-group-lg mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-primary" type="button"
+                                    ng-click="game.calculate()">Submit</button>
+                                <button class="btn btn-outline-danger" type="button"
+                                    ng-click="game.resetInput()">Reset</button>
+                            </div>
+                            <select class="custom-select {{game.data.multiplier == 2 ? 'double-multiplier' : ''}}"
+                                id="inputGroupSelect03" ng-model="game.data.multiplier">
+                                <option ng-value=1>1x Multiplier</option>
+                                <option ng-value=2>2x Multiplier</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="payoutBanner" ng-repeat="payment in game.data.displayPayments">
+                        {{payment.pay.name}} >> {{payment.receive.name}} | {{game.payout}} Points
+                        <span class="closeIcon" ng-click="game.closePayout(payment)"><i class="fa fa-close"></i></span>
+                    </div>
+
+                    <div id="paymentsdiv" class="card" ng-if="game.data.payments.length > 1">
+                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#payments"
+                            style="cursor: pointer;">
+                            <h5 class="mb-0">
+                                Payments
+                            </h5>
+                        </div>
+                        <div id="payments" class="collapse show">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Filter"
+                                        ng-model="game.filterPayments">
+                                </div>
+                                <table class="table table-bordered table-striped fade-in">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Date
+                                            </th>
+                                            <th>
+                                                Player
+                                            </th>
+                                            <th>
+                                                Points
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="payment in game.data.payments">
+                                            <td>
+                                                {{payment.date | date}}
+                                            </td>
+                                            <td>
+                                                {{payment.user.name}}
+                                            </td>
+                                            <td>
+                                                {{payment.points}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div id="scoreBoardDiv" class="card" ng-if="game.data.records.length > 0">
+                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#scoreBoard"
+                            style="cursor: pointer;">
+                            <h5 class="mb-0">
+                                Score Board
+                            </h5>
+                        </div>
+                        <div id="scoreBoard" class="collapse show">
+                            <div class="card-body">
+                                <table class="table table-bordered table-hover fade-in">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 40px; text-align:right;"></th>
+                                            <th style="width: 40px; text-align:right;">Round</th>
+                                            <th ng-repeat="user in game.data.participants | orderBy:'id'"
+                                                style="text-align:right;">
+                                                {{user.name}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in game.data.records">
+                                            <td>
+                                                <div class="deleteButton" ng-if="$index === 0"
+                                                    ng-click="game.deleteRecord(item)">
+                                                    <i class="fa fa-close"></i>
+                                                </div>
+                                            </td>
+                                            <td style="font-size: 24px; text-align:right;">
+                                                {{item.round}}
+                                            </td>
+                                            <td ng-repeat="player in item.participants | orderBy:'id'"
+                                                style="{{player.winner ? 'background-color: #c3e6cb;' : ''}}; font-size:24px; text-align:right;">
+                                                <span class="{{game.payStatus(player.pay)}}"></span>
+                                                <span title="Points" class="badge badge-secondary">{{player.points}}</span>
+                                                <span class="badge badge-secondary"><i ng-if="player.show" class="fa fa-check" title="Shown"></i></span>
+                                                <span class="badge badge-secondary"><i ng-if="player.dealer" class="fa fa-gavel" title="Dealer"></i></span>
+                                                {{player.pay}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="report" class="fade-in" style="display: none;">
+                <button class="btn btn-outline-secondary" type="button" ng-click="game.drawPlayerChart()">Close</button>
+                <div class="row">
+                    <div class="col-md-6" ng-repeat="player in game.data.participants">
+                        <div id="chart{{player.id}}" style="width: 100%; height: 500px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
+    <script type="text/javascript" src="../chart-service.js"></script>
+    <script src="compnent.js"></script>
+</body>
+
+</html>
