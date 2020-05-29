@@ -9,6 +9,7 @@ app.controller('gameController', function ($scope) {
     game.participants = [];
     game.payments = [];
     game.newPlayer = '';
+    game.initialPoint = 0;
     game.history = {
         data: [],
         payments: []
@@ -60,7 +61,7 @@ app.controller('gameController', function ($scope) {
         }
     }
 
-    game.addPlayer = function (name) {
+    game.addPlayer = function (name, initialpoints) {
         if (name != '') {
             const newPlayer = {
                 id: game.participants.length + 1,
@@ -74,6 +75,43 @@ app.controller('gameController', function ($scope) {
             }
             game.participants.push(newPlayer);
             game.newPlayer = '';
+            game.initialPoint = 0;
+
+            if(game.history.data.length === 0){
+                var report = {
+                    round: 1,
+                    totalPoints: 0,
+                    participants: []
+                }
+                const player = {
+                    id: newPlayer.id,
+                    name: newPlayer.name,
+                    winner: false,
+                    show: false,
+                    joot: false,
+                    points: 0,
+                    pay: initialpoints,
+                    active: true,
+                }
+                report.participants.push(player);
+                game.history.data.push(report);
+            } else if(game.history.data.length === 1) {
+                var initial = game.history.data.filter(obj => obj.round == 1);
+                if(initial.length > 0){
+                    initial = initial[0];
+                    const player = {
+                        id: newPlayer.id,
+                        name: newPlayer.name,
+                        winner: false,
+                        show: false,
+                        joot: false,
+                        points: 0,
+                        pay: initialpoints,
+                        active: true,
+                    }
+                    initial.participants.push(player);
+                }
+            }
         }
     }
 

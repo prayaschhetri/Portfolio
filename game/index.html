@@ -74,9 +74,11 @@
                                         <div class="input-group mb-3 form-group">
                                             <input type="text" class="form-control" placeholder="Player Name"
                                                 ng-model="game.newPlayer">
+                                                <input type="number" class="form-control" placeholder="Points"
+                                                ng-model="game.initialPoint">
                                             <div class="input-group-append">
                                                 <button class="btn btn-outline-secondary" type="button"
-                                                    ng-click="game.addPlayer(game.newPlayer)">Add Player</button>
+                                                    ng-click="game.addPlayer(game.newPlayer, game.initialPoint)">Add Player</button>
                                             </div>
                                         </div>
                                     </div>
