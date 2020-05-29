@@ -5,6 +5,7 @@ app.controller('gameController', function ($scope) {
     game.multiplierThreshold = 25;
     game.payOut = null;
     game.payReceive = null;
+    game.payout = 50;
     game.displayPayments = [];
     game.participants = [];
     game.payments = [];
@@ -213,10 +214,10 @@ app.controller('gameController', function ($scope) {
                                         lastPlayer = lastPlayer[0];
                                         currentPlayer.pay = currentPlayer.pay + lastPlayer.pay;
 
-                                        if (currentPlayer.pay <= -100) {
+                                        if (currentPlayer.pay <= (game.payout * -1)) {
                                             payout = true;
                                             payusers.push(currentPlayer);
-                                            currentPlayer.pay = currentPlayer.pay + 100;
+                                            currentPlayer.pay = currentPlayer.pay + game.payout;
                                         }
                                     }
                                 }
@@ -240,7 +241,7 @@ app.controller('gameController', function ($scope) {
                         });
 
                         if (highestPointUser != null) {
-                            highestPointUser.pay = highestPointUser.pay - 100;
+                            highestPointUser.pay = highestPointUser.pay - game.payout;
                             var displayPayment = {
                                 pay: payuser,
                                 receive: highestPointUser,
@@ -249,13 +250,13 @@ app.controller('gameController', function ($scope) {
                             var paymentPay = {
                                 round: report.round,
                                 user: payuser,
-                                points: -100,
+                                points: (game.payout * -1),
                                 date: Date.now()
                             }
                             var paymentReceive = {
                                 round: report.round,
                                 user: highestPointUser,
-                                points: 100,
+                                points: game.payout,
                                 date: Date.now()
                             }
                             if (game.history.payments == null || game.history.payments == undefined) {

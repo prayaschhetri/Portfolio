@@ -71,6 +71,20 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 form-group">
+                                        <div id="multiplierThreshold">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon3">Payout</span>
+                                                </div>
+                                                <input type="number" class="form-control"
+                                                    ng-model="game.payout">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">Points</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 form-group">
                                         <div class="input-group mb-3 form-group">
                                             <input type="text" class="form-control" placeholder="Player Name"
                                                 ng-model="game.newPlayer">
@@ -155,7 +169,7 @@
 
                 <div class="col-md-8">
                     <div class="payoutBanner" ng-repeat="payment in game.displayPayments">
-                        {{payment.pay.name}} >> {{payment.receive.name}} | 100 Points
+                        {{payment.pay.name}} >> {{payment.receive.name}} | {{game.payout}} Points
                         <span class="closeIcon" ng-click="game.closePayout(payment)"><i class="fa fa-close"></i></span>
                     </div>
 
