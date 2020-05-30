@@ -272,7 +272,7 @@
                                                 Won: {{player.winner}}<br>
                                                 Shown: {{player.show}}<br>
                                                 Joot: {{player.joot}}<br>
-                                                Points: {{player.points}}
+                                                <span class="badge {{player.points < 0 ? 'badge-danger' : 'badge-success'}}">{{player.points | makePositive}}</span>
                                             </div>
                                             <div class="icon">
                                                 <i class="fa fa-user"></i>

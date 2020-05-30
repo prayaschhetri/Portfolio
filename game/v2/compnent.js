@@ -1,4 +1,6 @@
-var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']);
+var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']).filter('makePositive', function() {
+    return function(num) { return Math.abs(num); }
+});;
 
 app.controller('gameController', function ($scope) {
     var game = this;
