@@ -14,7 +14,36 @@ app.controller('gameController', function ($scope) {
         payinterval: 50,
         displayPayments: [],
         payments: [],
-        records: []
+        records: [],
+        dashboard: {
+            rounds: 0,
+            roundsToday: 0,
+            highestPoint: 0,
+            highestPointPlayer: '',
+            participants: [],
+            highestPay: 0,
+            highestPayPlayer: '',
+        },
+    }
+
+    game.movePlayerDown = function (item) {
+        var index = game.data.participants.indexOf(item);
+        var newIndex = index + 1;
+        if (newIndex > game.data.participants.length - 1)
+            newIndex = 0;
+
+        game.data.participants.splice(index, 1);
+        game.data.participants.splice(newIndex, 0, item);
+    }
+
+    game.movePlayerUp = function (item) {
+        var index = game.data.participants.indexOf(item);
+        var newIndex = index - 1;
+        if (newIndex < 0)
+            newIndex = game.data.participants.length - 1;
+
+        game.data.participants.splice(index, 1);
+        game.data.participants.splice(newIndex, 0, item);
     }
 
     game.payStatus = function (pay) {
@@ -41,7 +70,7 @@ app.controller('gameController', function ($scope) {
         game.data.records = game.data.records.filter(obj => obj !== item);
     }
 
-    game.changeDealer = function(item) {
+    game.changeDealer = function (item) {
         item.dealer = true;
         game.data.participants.forEach(player => {
             if (item.id !== player.id) {
@@ -50,15 +79,15 @@ app.controller('gameController', function ($scope) {
         });
     }
 
-    game.autoChangeDealer = function() {
+    game.autoChangeDealer = function () {
         var dealer = game.data.participants.filter(obj => obj.dealer == true);
-        if(dealer.length > 0)
+        if (dealer.length > 0)
             dealer = dealer[0];
 
-        if(dealer != null){
+        if (dealer != null) {
             var index = game.data.participants.indexOf(dealer);
             var nextDealer = game.data.participants[index + 1];
-            if(nextDealer == null){
+            if (nextDealer == null) {
                 nextDealer = game.data.participants[0];
             }
             nextDealer.dealer = true;
@@ -70,8 +99,6 @@ app.controller('gameController', function ($scope) {
 
         }
     }
-
-
 
     game.changeWinner = function (item) {
         item.show = true;
@@ -198,6 +225,8 @@ app.controller('gameController', function ($scope) {
             var data = e.target.result;
             var parsedData = JSON.parse(data);
             game.data = parsedData;
+
+            game.updateDashboard_updateRoundsToday();
 
             $scope.$apply();
         }
@@ -401,10 +430,24 @@ app.controller('gameController', function ($scope) {
                                     }
                                     game.data.payments.push(paymentPay);
                                     game.data.payments.push(paymentReceive);
+                                    //Dashboard
+                                    var dashboardPay = game.data.dashboard.participants.filter(obj => obj.id == paymentPay.user.id);
+                                    if (dashboardPay.length > 0) {
+                                        dashboardPay = dashboardPay[0];
+                                        dashboardPay.points += paymentPay.points;
+                                    }
+                                    var dashboardReceive = game.data.dashboard.participants.filter(obj => obj.id == paymentReceive.user.id);
+                                    if (dashboardReceive.length > 0) {
+                                        dashboardReceive = dashboardReceive[0];
+                                        dashboardReceive.points += paymentReceive.points;
+                                    }
+                                    game.updateDashboard_updateHighestPay();
                                 }
                             });
                         }
                     }
+
+                    game.updateDashboard(report);
 
                     game.data.records.unshift(report);
 
@@ -437,6 +480,144 @@ app.controller('gameController', function ($scope) {
         } else {
             alert("There must be at least two active players");
         }
+    }
+
+
+
+
+
+    game.updateDashboard = function (report) {
+        if (game.data.dashboard == null) {
+            game.data.dashboard = {
+                rounds: 0,
+                roundsToday: 0,
+                highestPoint: 0,
+                highestPointPlayer: '',
+                participants: [],
+            }
+
+            //Rounds
+            game.data.dashboard.rounds = game.data.records.length;
+            //RoundsToday
+            game.updateDashboard_updateRoundsToday();
+            //Highest Point
+            game.updateDashboard_updateHighestPoint();
+            //Highest Pay
+            game.updateDashboard_updateHighestPay();
+
+            //participants
+            if (game.data.records.length > 0) {
+                var lastGame = game.data.records[0];
+                lastGame.participants.forEach(element => {
+                    var player = {
+                        id: element.id,
+                        name: element.name,
+                        winner: element.winner ? 1 : 0,
+                        show: element.show ? 1 : 0,
+                        joot: element.joot ? 1 : 0,
+                        points: 0,
+                        pay: element.pay,
+                    }
+                    game.data.dashboard.participants.push(player);
+                });
+            } else {
+                game.data.participants.forEach(element => {
+                    var player = {
+                        id: element.id,
+                        name: element.name,
+                        winner: element.winner ? 1 : 0,
+                        show: element.show ? 1 : 0,
+                        joot: element.joot ? 1 : 0,
+                        points: 0,
+                        pay: element.pay,
+                    }
+                    game.data.dashboard.participants.push(player);
+                });
+            }
+
+        } else {
+            if (report != null) {
+
+                //Rounds
+                game.data.dashboard.rounds++;
+                //RoundsToday
+                game.data.dashboard.roundsToday++;
+                //HighestPoint
+                report.participants.forEach(element => {
+                    if (element.points >= game.data.dashboard.highestPoint) {
+                        game.data.dashboard.highestPoint = element.points;
+                        game.data.dashboard.highestPointPlayer = element.name;
+                    }
+                });
+
+
+                //participants
+                report.participants.forEach(element => {
+                    var player = game.data.dashboard.participants.filter(obj => obj.id == element.id);
+                    if (player.length > 0) {
+                        player = player[0];
+                        player.pay = element.pay;
+                        player.winner = element.winner ? player.winner + 1 : player.winner;
+                        player.show = element.show ? player.show + 1 : player.show;
+                        player.joot = element.joot ? player.joot + 1 : player.joot;
+                    } else {
+                        var newPlayer = {
+                            id: element.id,
+                            name: element.name,
+                            winner: element.winner ? 1 : 0,
+                            show: element.show ? 1 : 0,
+                            joot: element.joot ? 1 : 0,
+                            points: 0,
+                            pay: element.pay,
+                        }
+                        game.data.dashboard.participants.push(newPlayer);
+                    }
+                });
+            }
+        }
+    }
+
+    game.updateDashboard_updateRoundsToday = function () {
+        const today = new Date()
+        var count = 0;
+        game.data.records.forEach(element => {
+            var date = new Date(element.date);
+            if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+                count++;
+            }
+        });
+
+        game.data.dashboard.roundsToday = count;
+    }
+
+    game.updateDashboard_updateHighestPoint = function () {
+        var highestPoint = 0;
+        var highestPointPlayer = '';
+        game.data.records.forEach(element => {
+            element.participants.forEach(player => {
+                if (player.points > highestPoint) {
+                    highestPoint = player.points;
+                    highestPointPlayer = player.name;
+                }
+            });
+        });
+
+        game.data.dashboard.highestPoint = highestPoint;
+        game.data.dashboard.highestPointPlayer = highestPointPlayer;
+    }
+
+    game.updateDashboard_updateHighestPay = function(){
+        var pay = 0;
+        var player = '';
+        game.data.dashboard.participants.forEach(element => {
+            if(element.points >= pay){
+                pay = element.points;
+                player = element.name;
+            }
+        });
+
+        game.data.dashboard.highestPay = pay;
+        game.data.dashboard.highestPayPlayer = player;
     }
 
 });

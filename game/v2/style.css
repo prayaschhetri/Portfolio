@@ -1,15 +1,14 @@
 .deleteButton {
-  text-align: center;
   cursor: pointer;
-  padding: 0;
+  display: inline-block;
 }
 .deleteButton:hover {
   background-color: #eeeeee;
 }
 
-.participants {
+/* .participants {
   margin-bottom: 15px;
-}
+} */
 
 .dotRed {
   height: 12px;
@@ -107,11 +106,38 @@
   }
 }
 
-@keyframes ants { to { background-position: 100% 100% } }
+@keyframes ants {
+  to {
+    background-position: 100% 100%;
+  }
+}
 
 .dealer {
-	border: 1px solid transparent;
-	background: linear-gradient(white, white) padding-box,
-	            repeating-linear-gradient(-45deg, black 0, black 25%, transparent 0, transparent 50%) 0 / .6em .6em;
-	animation: ants 12s linear infinite;
+  border: 1px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+    repeating-linear-gradient(
+        -45deg,
+        black 0,
+        black 25%,
+        transparent 0,
+        transparent 50%
+      )
+      0 / 0.6em 0.6em;
+  animation: ants 12s linear infinite;
+}
+
+.pointsDisplay {
+  font-size: 42px;
+  text-align: right;
+  white-space: nowrap;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: right !important;
+}
+
+.overview-item--c1 {
+  background-image: -moz-linear-gradient(90deg, #3f5efb 0%, #fc466b 100%);
+  background-image: -webkit-linear-gradient(90deg, #3f5efb 0%, #fc466b 100%);
+  background-image: -ms-linear-gradient(90deg, #3f5efb 0%, #fc466b 100%);
 }
