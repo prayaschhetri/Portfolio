@@ -5,6 +5,7 @@ var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']).filter
 app.controller('gameController', function ($scope) {
     var game = this;
     game.newPlayer = '';
+    game.sounds = true;
     game.initialPoint = 0;
     game.viewReport = false;
     game.filterPayments = '';
@@ -13,6 +14,7 @@ app.controller('gameController', function ($scope) {
     game.multiplierAudio = new Audio("sounds/doublegame.wav");
     game.highestPointAudio = new Audio("sounds/highestPoint.wav");
     game.highestPayAudio = new Audio("sounds/highestPay.wav");
+    game.paymentAudio = new Audio("sounds/payment.wav");
     game.multiplierAudio.loop = true;
     game.data = {
         participants: [],
@@ -420,6 +422,11 @@ app.controller('gameController', function ($scope) {
                                         receive: highestPointUser,
                                     }
                                     game.data.displayPayments.push(displayPayment);
+                                    if (game.sounds) {
+                                        setTimeout(() => {
+                                            game.paymentAudio.play();
+                                        }, 2000);
+                                    }
                                     var paymentPay = {
                                         round: report.round,
                                         user: payuser,
@@ -468,12 +475,16 @@ app.controller('gameController', function ($scope) {
                         });
                         if (multiplied) {
                             game.data.multiplier = 2;
-                            game.changeMultiplier();
+                            if (game.sounds) {
+                                game.changeMultiplier();
+                            }
                         }
                         else {
                             game.data.multiplier = 1;
                             game.changeMultiplier();
-                            game.winnerAudio.play();
+                            if (game.sounds) {
+                                game.winnerAudio.play();
+                            }
                         }
                     }
 
@@ -553,15 +564,23 @@ app.controller('gameController', function ($scope) {
                 //RoundsToday
                 game.data.dashboard.roundsToday++;
                 //HighestPoint
+                var hpoints = game.data.dashboard.highestPoint;
+                var hplayer = game.data.dashboard.highestPointPlayer;
                 report.participants.forEach(element => {
-                    if (element.points >= game.data.dashboard.highestPoint) {
-                        game.data.dashboard.highestPoint = element.points;
-                        game.data.dashboard.highestPointPlayer = element.name;
-                        setTimeout(() => {
-                            game.highestPointAudio.play();
-                        }, 5000);
+                    if (element.points >= hpoints) {
+                        hpoints = element.points;
+                        hplayer = element.name;
                     }
                 });
+
+                if (game.sounds && hplayer != game.data.dashboard.highestPointPlayer) {
+                    setTimeout(() => {
+                        game.highestPointAudio.play();
+                    }, 5000);
+                }
+
+                game.data.dashboard.highestPoint = hpoints;
+                game.data.dashboard.highestPointPlayer = hplayer;
 
 
                 //participants
@@ -629,7 +648,7 @@ app.controller('gameController', function ($scope) {
             }
         });
 
-        if (game.data.dashboard.highestPayPlayer != player) {
+        if (game.sounds && game.data.dashboard.highestPayPlayer != player) {
             setTimeout(() => {
                 game.highestPayAudio.play();
             }, 3000);

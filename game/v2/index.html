@@ -65,6 +65,14 @@
                                                 ng-click="game.drawPlayerChart()">Report</button>
                                         </div>
                                     </div>
+                                    <div class="col-md-12 form-group">
+                                        <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                            <input type="checkbox" class="custom-control-input" id="enableSound"
+                                                ng-model="game.sounds">
+                                            <label class="custom-control-label"
+                                                for="enableSound">Enable Sounds</label>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div id="multiplierThreshold">
                                             <div class="input-group mb-3">
@@ -105,8 +113,7 @@
                         </div>
                     </div>
                     <div id="participantsDiv" class="fade-in" ui-sortable ng-model="game.data.participants">
-                        <div class="participants form-group"
-                            ng-repeat="player in game.data.participants">
+                        <div class="participants form-group" ng-repeat="player in game.data.participants">
                             <div class="dealer" ng-if="player.dealer">
                                 <img src="images/cards.png">
                             </div>
@@ -181,7 +188,8 @@
                                     ng-click="game.resetInput()">Reset</button>
                             </div>
                             <select class="custom-select {{game.data.multiplier == 2 ? 'double-multiplier' : ''}}"
-                                id="inputGroupSelect03" ng-model="game.data.multiplier" ng-change="game.changeMultiplier()">
+                                id="inputGroupSelect03" ng-model="game.data.multiplier"
+                                ng-change="game.changeMultiplier()">
                                 <option ng-value=1>1x Multiplier</option>
                                 <option ng-value=2>2x Multiplier</option>
                             </select>
@@ -267,7 +275,8 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-lg-3" ng-repeat="player in game.data.dashboard.participants">
+                                    <div class="col-md-6 col-lg-3"
+                                        ng-repeat="player in game.data.dashboard.participants">
                                         <div class="statistic__item">
                                             <h2 class="number">{{player.pay}}</h2>
                                             <span class="desc">{{player.name}}</span>
@@ -275,7 +284,8 @@
                                                 Won: {{player.winner}}<br>
                                                 Shown: {{player.show}}<br>
                                                 Joot: {{player.joot}}<br>
-                                                <span class="badge {{player.points < 0 ? 'badge-danger' : 'badge-success'}}">{{player.points | makePositive}}</span>
+                                                <span
+                                                    class="badge {{player.points < 0 ? 'badge-danger' : 'badge-success'}}">{{player.points | makePositive}}</span>
                                             </div>
                                             <div class="icon">
                                                 <i class="fa fa-user"></i>
