@@ -105,8 +105,11 @@
                         </div>
                     </div>
                     <div id="participantsDiv" class="fade-in" ui-sortable ng-model="game.data.participants">
-                        <div class="participants form-group {{player.dealer ? 'dealer' : ''}}"
+                        <div class="participants form-group"
                             ng-repeat="player in game.data.participants">
+                            <div class="dealer" ng-if="player.dealer">
+                                <img src="images/cards.png">
+                            </div>
                             <div class="card" style="opacity: {{player.active ? '1' : '0.3'}}; margin:0;">
                                 <div>
                                     <div class="dropdown">
@@ -178,7 +181,7 @@
                                     ng-click="game.resetInput()">Reset</button>
                             </div>
                             <select class="custom-select {{game.data.multiplier == 2 ? 'double-multiplier' : ''}}"
-                                id="inputGroupSelect03" ng-model="game.data.multiplier">
+                                id="inputGroupSelect03" ng-model="game.data.multiplier" ng-change="game.changeMultiplier()">
                                 <option ng-value=1>1x Multiplier</option>
                                 <option ng-value=2>2x Multiplier</option>
                             </select>

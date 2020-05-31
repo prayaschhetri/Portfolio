@@ -1,5 +1,5 @@
-var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']).filter('makePositive', function() {
-    return function(num) { return Math.abs(num); }
+var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']).filter('makePositive', function () {
+    return function (num) { return Math.abs(num); }
 });;
 
 app.controller('gameController', function ($scope) {
@@ -8,7 +8,12 @@ app.controller('gameController', function ($scope) {
     game.initialPoint = 0;
     game.viewReport = false;
     game.filterPayments = '';
-
+    game.winnerAudio = new Audio("sounds/winner.wav");
+    game.multiplierIntroAudio = new Audio("sounds/doublegameInro.wav");
+    game.multiplierAudio = new Audio("sounds/doublegame.wav");
+    game.highestPointAudio = new Audio("sounds/highestPoint.wav");
+    game.highestPayAudio = new Audio("sounds/highestPay.wav");
+    game.multiplierAudio.loop = true;
     game.data = {
         participants: [],
         multiplierThreshold: 25,
@@ -463,9 +468,12 @@ app.controller('gameController', function ($scope) {
                         });
                         if (multiplied) {
                             game.data.multiplier = 2;
+                            game.changeMultiplier();
                         }
                         else {
                             game.data.multiplier = 1;
+                            game.changeMultiplier();
+                            game.winnerAudio.play();
                         }
                     }
 
@@ -549,6 +557,9 @@ app.controller('gameController', function ($scope) {
                     if (element.points >= game.data.dashboard.highestPoint) {
                         game.data.dashboard.highestPoint = element.points;
                         game.data.dashboard.highestPointPlayer = element.name;
+                        setTimeout(() => {
+                            game.highestPointAudio.play();
+                        }, 5000);
                     }
                 });
 
@@ -608,18 +619,38 @@ app.controller('gameController', function ($scope) {
         game.data.dashboard.highestPointPlayer = highestPointPlayer;
     }
 
-    game.updateDashboard_updateHighestPay = function(){
+    game.updateDashboard_updateHighestPay = function () {
         var pay = 0;
         var player = '';
         game.data.dashboard.participants.forEach(element => {
-            if(element.points >= pay){
+            if (element.points >= pay) {
                 pay = element.points;
                 player = element.name;
             }
         });
 
+        if (game.data.dashboard.highestPayPlayer != player) {
+            setTimeout(() => {
+                game.highestPayAudio.play();
+            }, 3000);
+        }
+
         game.data.dashboard.highestPay = pay;
         game.data.dashboard.highestPayPlayer = player;
+    }
+
+
+
+    //Sounds
+    game.changeMultiplier = function () {
+        if (game.data.multiplier == 2) {
+            game.multiplierIntroAudio.play();
+            setTimeout(() => {
+                game.multiplierAudio.play();
+            }, 4000);
+        } else {
+            game.multiplierAudio.pause();
+        }
     }
 
 });
