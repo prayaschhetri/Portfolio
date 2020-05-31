@@ -275,7 +275,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-lg-3"
+                                    <div class="col-md-6 col-lg-4"
                                         ng-repeat="player in game.data.dashboard.participants">
                                         <div class="statistic__item">
                                             <h2 class="number">{{player.pay}}</h2>
@@ -293,6 +293,53 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scoreBoardDiv" class="card" ng-if="game.data.records.length > 0">
+                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#scoreBoard"
+                            style="cursor: pointer;">
+                            <h5 class="mb-0">
+                                Score Board
+                            </h5>
+                        </div>
+                        <div id="scoreBoard" class="collapse show">
+                            <div class="card-body" style="padding: 0; height: 300px; overflow: auto;">
+                                <table class="table table-hover fade-in" style="margin:0;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 40px; text-align:right;">Round</th>
+                                            <th ng-repeat="user in game.data.participants | orderBy:'id'"
+                                                style="text-align:right;">
+                                                {{user.name}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in game.data.records">
+                                            <td style="font-size: 24px; text-align:right;">
+                                                <div class="deleteButton" ng-if="$index === 0"
+                                                    ng-click="game.deleteRecord(item)">
+                                                    <i class="fa fa-close"></i>
+                                                </div>{{item.round}}
+                                            </td>
+                                            <td ng-repeat="player in item.participants | orderBy:'id'"
+                                                style="{{player.winner ? 'background-color: #c3e6cb;' : ''}}; font-size:24px; text-align:right;">
+                                                <span class="{{game.payStatus(player.pay)}}"></span>
+                                                <span title="Points" class="badge badge-secondary"
+                                                    style="font-size: 14px;">{{player.points}}</span>
+                                                <span class="badge badge-secondary" style="font-size: 14px;"><i
+                                                        ng-if="player.show" class="fa fa-check"
+                                                        title="Shown"></i></span>
+                                                <span class="badge badge-secondary" style="font-size: 14px;"><i
+                                                        ng-if="player.dealer" class="fa fa-gavel"
+                                                        title="Dealer"></i></span>
+                                                <span>{{player.pay}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -334,52 +381,6 @@
                                             </td>
                                             <td>
                                                 {{payment.points}}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="scoreBoardDiv" class="card" ng-if="game.data.records.length > 0">
-                        <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#scoreBoard"
-                            style="cursor: pointer;">
-                            <h5 class="mb-0">
-                                Score Board
-                            </h5>
-                        </div>
-                        <div id="scoreBoard" class="collapse show">
-                            <div class="card-body" style="padding: 0; height: 300px; overflow: auto;">
-                                <table class="table table-hover fade-in" style="margin:0;">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 40px; text-align:right;">Round</th>
-                                            <th ng-repeat="user in game.data.participants | orderBy:'id'"
-                                                style="text-align:right;">
-                                                {{user.name}}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr ng-repeat="item in game.data.records">
-                                            <td style="font-size: 24px; text-align:right;">
-                                                <div class="deleteButton" ng-if="$index === 0"
-                                                    ng-click="game.deleteRecord(item)">
-                                                    <i class="fa fa-close"></i>
-                                                </div>{{item.round}}
-                                            </td>
-                                            <td ng-repeat="player in item.participants | orderBy:'id'"
-                                                style="{{player.winner ? 'background-color: #c3e6cb;' : ''}}; font-size:24px; text-align:right;">
-                                                <span class="{{game.payStatus(player.pay)}}"></span>
-                                                <span title="Points" class="badge badge-secondary"
-                                                    style="font-size: 14px;">{{player.points}}</span>
-                                                <span class="badge badge-secondary" style="font-size: 14px;"><i
-                                                        ng-if="player.show" class="fa fa-check"
-                                                        title="Shown"></i></span>
-                                                <span class="badge badge-secondary" style="font-size: 14px;"><i
-                                                        ng-if="player.dealer" class="fa fa-gavel"
-                                                        title="Dealer"></i></span>
-                                                <span>{{player.pay}}</span>
                                             </td>
                                         </tr>
                                     </tbody>

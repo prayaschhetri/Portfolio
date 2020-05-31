@@ -664,9 +664,6 @@ app.controller('gameController', function ($scope) {
     game.changeMultiplier = function () {
         if (game.data.multiplier == 2) {
             game.multiplierIntroAudio.play();
-            setTimeout(() => {
-                game.multiplierAudio.play();
-            }, 4000);
         } else {
             game.multiplierAudio.pause();
         }
