@@ -12,7 +12,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/AlphaGit/ng-pattern-restrict/master/src/ng-pattern-restrict.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.rawgit.com/AlphaGit/ng-pattern-restrict/master/src/ng-pattern-restrict.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
@@ -67,8 +68,7 @@
                                         <div class="custom-control custom-checkbox custom-control-inline mb-3">
                                             <input type="checkbox" class="custom-control-input" id="enableSound"
                                                 ng-model="game.sounds">
-                                            <label class="custom-control-label"
-                                                for="enableSound">Enable Sounds</label>
+                                            <label class="custom-control-label" for="enableSound">Enable Sounds</label>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -112,7 +112,8 @@
                     </div>
                     <div id="participantsDiv" class="fade-in">
                         <div ui-sortable ng-model="game.data.participants">
-                            <div class="participants form-group {{player.dealer ? 'dealer' : ''}}" ng-repeat="player in game.data.participants">
+                            <div class="participants form-group {{player.dealer ? 'dealer' : ''}}"
+                                ng-repeat="player in game.data.participants">
                                 <!-- <div class="dealer fade-in" ng-if="player.dealer">
                                     <img src="images/cards.png">
                                 </div> -->
@@ -121,18 +122,23 @@
                                         <div class="dropdown">
                                             <button class="btn btn-link closeIcon" type="button" data-toggle="dropdown"
                                                 aria-haspopup="true" aria-expanded="false"
-                                                style="right: 2px; top: 8px; z-index: 1000; color: black;">
+                                                style="right: 2px; top: 8px; z-index: 1; color: black;">
                                                 <i class="fa fa-ellipsis-v"></i>
                                             </button>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="" ng-click="game.deletePlayer(player)">Active
+                                                <a class="dropdown-item" href=""
+                                                    ng-click="game.deletePlayer(player)">Active
                                                     Toggle</a>
                                                 <a class="dropdown-item" href=""
                                                     ng-click="game.changeDealer(player)">Dealer</a>
-                                                <a class="dropdown-item" href="" ng-click="game.movePlayerDown(player)">Move
+                                                <a class="dropdown-item" href=""
+                                                    ng-click="game.movePlayerDown(player)">Move
                                                     Down</a>
-                                                <a class="dropdown-item" href="" ng-click="game.movePlayerUp(player)">Move
+                                                <a class="dropdown-item" href=""
+                                                    ng-click="game.movePlayerUp(player)">Move
                                                     Up</a>
+                                                <a class="dropdown-item" href="" ng-click="game.editPlayer(player)">Edit
+                                                    Player</a>
                                             </div>
                                         </div>
                                     </div>
@@ -140,30 +146,35 @@
                                         class="card-body {{player.winner ? 'table-success' : (player.joot ? 'table-primary' :'')}}">
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                <div
+                                                    class="custom-control custom-checkbox custom-control-inline mb-3 checkbox-lg">
                                                     <input type="checkbox" class="custom-control-input"
                                                         id="player{{$index}}" ng-model="player.winner"
                                                         ng-click="game.changeWinner(player)">
-                                                    <label style="font-weight: bold;" class="custom-control-label"
+                                                    <label class="custom-control-label"
                                                         for="player{{$index}}">{{player.name}}</label>
                                                 </div>
                                                 <div class="input-group form-group">
                                                     <input type="number" class="form-control" ng-model="player.points"
-                                                        min='0' max='200' step='1' ng-change="game.changePoints(player)">
+                                                        min='0' max='200' step='1'
+                                                        ng-change="game.changePoints(player)">
                                                 </div>
                                                 <div>
-                                                    <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                    <div
+                                                        class="custom-control custom-checkbox custom-control-inline mb-3">
                                                         <input type="checkbox" class="custom-control-input"
                                                             id="checkShow{{$index}}" ng-model="player.show"
                                                             ng-change="game.changeShow(player)">
                                                         <label class="custom-control-label"
                                                             for="checkShow{{$index}}">Show</label>
                                                     </div>
-                                                    <div class="custom-control custom-checkbox custom-control-inline mb-3">
+                                                    <div
+                                                        class="custom-control custom-checkbox custom-control-inline mb-3">
                                                         <input type="checkbox" class="custom-control-input"
                                                             id="checkPair{{$index}}" ng-model="player.joot"
                                                             ng-change="game.isPair(player)">
-                                                        <label class="custom-control-label" for="checkPair{{$index}}">Joot
+                                                        <label class="custom-control-label"
+                                                            for="checkPair{{$index}}">Joot
                                                             Show</label>
                                                     </div>
                                                 </div>
@@ -221,7 +232,8 @@
                                                         <i class="fa fa-flag-checkered"></i>
                                                     </div>
                                                     <div class="text">
-                                                        <h2>{{game.data.dashboard.roundsToday}}/{{game.data.dashboard.rounds}}</h2>
+                                                        <h2>{{game.data.dashboard.roundsToday}}/{{game.data.dashboard.rounds}}
+                                                        </h2>
                                                         <span>Hands</span>
                                                     </div>
                                                 </div>
@@ -236,7 +248,8 @@
                                                         <i class="fa fa-magnet"></i>
                                                     </div>
                                                     <div class="text">
-                                                        <h2>{{game.data.dashboard.doublegameToday}}/{{game.data.dashboard.doublegame}}</h2>
+                                                        <h2>{{game.data.dashboard.doublegameToday}}/{{game.data.dashboard.doublegame}}
+                                                        </h2>
                                                         <span>Double</span>
                                                     </div>
                                                 </div>
@@ -252,7 +265,8 @@
                                                     </div>
                                                     <div class="text">
                                                         <h2>{{game.data.dashboard.highestPoint}}</h2>
-                                                        <span ng-if="game.data.dashboard.highestPointPlayer">{{game.data.dashboard.highestPointPlayer}}</span>
+                                                        <span
+                                                            ng-if="game.data.dashboard.highestPointPlayer">{{game.data.dashboard.highestPointPlayer}}</span>
                                                         <span ng-if="!game.data.dashboard.highestPointPlayer">NA</span>
                                                     </div>
                                                 </div>
@@ -268,7 +282,8 @@
                                                     </div>
                                                     <div class="text">
                                                         <h2>{{game.data.dashboard.highestPay}}</h2>
-                                                        <span ng-if="game.data.dashboard.highestPayPlayer">{{game.data.dashboard.highestPayPlayer}}</span>
+                                                        <span
+                                                            ng-if="game.data.dashboard.highestPayPlayer">{{game.data.dashboard.highestPayPlayer}}</span>
                                                         <span ng-if="!game.data.dashboard.highestPayPlayer">NA</span>
                                                     </div>
                                                 </div>
@@ -280,18 +295,23 @@
                                     <div class="col-md-6 col-lg-4 form-group"
                                         ng-repeat="player in game.data.dashboard.participants">
                                         <div class="statistic__item">
+                                            <img ng-if="player.image" class="playerImage-dash" ng-src="{{player.image}}"
+                                                alt="Avatar">
                                             <h2 class="number">{{player.pay}}</h2>
                                             <span class="desc">{{player.name}}</span>
                                             <div>
-                                                Won: <span ng-if="player.winnerToday">{{player.winnerToday}} /</span> {{player.winner}}<br>
-                                                Shown: <span ng-if="player.showToday">{{player.showToday}} /</span> {{player.show}}<br>
-                                                Joot: <span ng-if="player.jootToday">{{player.jootToday}} /</span> {{player.joot}}<br>
+                                                Won: <span ng-if="player.winnerToday">{{player.winnerToday}} /</span>
+                                                {{player.winner}}<br>
+                                                Shown: <span ng-if="player.showToday">{{player.showToday}} /</span>
+                                                {{player.show}}<br>
+                                                Joot: <span ng-if="player.jootToday">{{player.jootToday}} /</span>
+                                                {{player.joot}}<br>
                                                 <span
                                                     class="badge {{player.points < 0 ? 'badge-danger' : 'badge-success'}}">{{player.points | makePositive}}</span>
                                             </div>
-                                            <div class="icon">
+                                            <!-- <div class="icon">
                                                 <i class="fa fa-user"></i>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -300,8 +320,8 @@
                     </div>
 
                     <div id="scoreBoardDiv" class="card form-group" ng-if="game.data.records.length > 0">
-                        <div class="card-header collapsed" id="headingOne" data-toggle="collapse" data-target="#scoreBoard"
-                            style="cursor: pointer;">
+                        <div class="card-header collapsed" id="headingOne" data-toggle="collapse"
+                            data-target="#scoreBoard" style="cursor: pointer;">
                             <h5 class="mb-0">
                                 Scoreboard
                             </h5>
@@ -346,8 +366,8 @@
                     </div>
 
                     <div id="paymentsdiv" class="card form-group" ng-if="game.data.payments.length > 1">
-                        <div class="card-header collapsed" id="headingOne" data-toggle="collapse" data-target="#payments"
-                            style="cursor: pointer;">
+                        <div class="card-header collapsed" id="headingOne" data-toggle="collapse"
+                            data-target="#payments" style="cursor: pointer;">
                             <h5 class="mb-0">
                                 Payments
                             </h5>
@@ -396,6 +416,33 @@
                 <div class="row">
                     <div class="col-md-6" ng-repeat="player in game.data.participants">
                         <div id="chart{{player.id}}" style="width: 100%; height: 500px"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="playerModal" tabindex="-1" role="dialog" aria-labelledby="playerModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">{{game.playeredit.name}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Player Image"
+                                    ng-model="game.playeredit.image">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                ng-click="game.saveEditPlayer()">Save changes</button>
+                        </div>
                     </div>
                 </div>
             </div>

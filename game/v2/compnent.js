@@ -5,6 +5,8 @@ var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']).filter
 app.controller('gameController', function ($scope) {
     var game = this;
     game.newPlayer = '';
+    game.playerImage = '';
+    game.playeredit = null;
     game.sounds = true;
     game.initialPoint = 0;
     game.viewReport = false;
@@ -228,26 +230,46 @@ app.controller('gameController', function ($scope) {
         a.click();
     }
 
-    game.upload = function () {
-        if(document.getElementById('file').files.length > 0){
-            var f = document.getElementById('file').files[0],
-            r = new FileReader();
+    game.editPlayer = function (player) {
+        game.playeredit = player;
+        var element = angular.element('#playerModal');
+        element.modal('show');
+    }
 
-        r.onloadend = function (e) {
-            var data = e.target.result;
-            var parsedData = JSON.parse(data);
-            game.data = parsedData;
-
-            game.updateDashboard_updateRoundsToday();
-            game.data.dashboard.doublegameToday = 0;
-            if (game.data.dashboard.doublegame == null) {
-                game.data.dashboard.doublegame = 0;
-            }
-
-            $scope.$apply();
+    game.saveEditPlayer = function() {
+        var player = game.data.participants.filter(obj => obj.id == game.playeredit.id);
+        var playerDash = game.data.dashboard.participants.filter(obj => obj.id == game.playeredit.id);
+        if(player.length > 0 && playerDash.length > 0)
+        {
+            player = player[0];
+            player.image = game.playeredit.image;
+            playerDash = playerDash[0];
+            playerDash.image = game.playeredit.image;
         }
 
-        r.readAsBinaryString(f);
+        console.log(player);
+    }
+
+    game.upload = function () {
+        if (document.getElementById('file').files.length > 0) {
+            var f = document.getElementById('file').files[0],
+                r = new FileReader();
+
+            r.onloadend = function (e) {
+                var data = e.target.result;
+                var parsedData = JSON.parse(data);
+                game.data = parsedData;
+
+                game.updateDashboard_updateRoundsToday();
+                game.data.dashboard.doublegameToday = 0;
+                if (game.data.dashboard.doublegame == null) {
+                    game.data.dashboard.doublegame = 0;
+                }
+
+                $scope.$apply();
+            }
+
+            r.readAsBinaryString(f);
         }
     }
 
