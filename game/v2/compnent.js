@@ -11,11 +11,11 @@ app.controller('gameController', function ($scope) {
     game.filterPayments = '';
     game.winnerAudio = new Audio("sounds/winner.wav");
     game.multiplierIntroAudio = new Audio("sounds/doublegameInro.wav");
-    game.multiplierAudio = new Audio("sounds/doublegame.wav");
+    //game.multiplierAudio = new Audio("sounds/doublegame.wav");
+    //game.multiplierAudio.loop = true;
     game.highestPointAudio = new Audio("sounds/highestPoint.wav");
     game.highestPayAudio = new Audio("sounds/highestPay.wav");
     game.paymentAudio = new Audio("sounds/payment.wav");
-    game.multiplierAudio.loop = true;
     game.data = {
         participants: [],
         multiplierThreshold: 25,
@@ -32,6 +32,8 @@ app.controller('gameController', function ($scope) {
             participants: [],
             highestPay: 0,
             highestPayPlayer: '',
+            doublegame: 0,
+            doublegameToday: 0,
         },
     }
 
@@ -227,7 +229,8 @@ app.controller('gameController', function ($scope) {
     }
 
     game.upload = function () {
-        var f = document.getElementById('file').files[0],
+        if(document.getElementById('file').files.length > 0){
+            var f = document.getElementById('file').files[0],
             r = new FileReader();
 
         r.onloadend = function (e) {
@@ -236,11 +239,16 @@ app.controller('gameController', function ($scope) {
             game.data = parsedData;
 
             game.updateDashboard_updateRoundsToday();
+            game.data.dashboard.doublegameToday = 0;
+            if (game.data.dashboard.doublegame == null) {
+                game.data.dashboard.doublegame = 0;
+            }
 
             $scope.$apply();
         }
 
         r.readAsBinaryString(f);
+        }
     }
 
     game.drawPlayerChart = function () {
@@ -362,20 +370,7 @@ app.controller('gameController', function ($scope) {
                         participants: []
                     }
 
-                    game.data.participants.forEach(player => {
-                        const playerReport = {
-                            id: player.id,
-                            name: player.name,
-                            winner: player.winner,
-                            show: player.show,
-                            joot: player.joot,
-                            points: player.points,
-                            pay: player.pay,
-                            dealer: player.dealer,
-                            active: player.active,
-                        }
-                        report.participants.push(playerReport);
-                    });
+                    report.participants = angular.copy(game.data.participants);
 
                     if (game.data.records && game.data.records.length > 0) {
                         var lastGame = game.data.records[0];
@@ -462,7 +457,6 @@ app.controller('gameController', function ($scope) {
                     }
 
                     game.updateDashboard(report);
-
                     game.data.records.unshift(report);
 
                     //multiplier
@@ -474,6 +468,8 @@ app.controller('gameController', function ($scope) {
                             }
                         });
                         if (multiplied) {
+                            game.data.dashboard.doublegame++;
+                            game.data.dashboard.doublegameToday++;
                             game.data.multiplier = 2;
                             if (game.sounds) {
                                 game.changeMultiplier();
@@ -504,9 +500,6 @@ app.controller('gameController', function ($scope) {
     }
 
 
-
-
-
     game.updateDashboard = function (report) {
         if (game.data.dashboard == null) {
             game.data.dashboard = {
@@ -534,8 +527,11 @@ app.controller('gameController', function ($scope) {
                         id: element.id,
                         name: element.name,
                         winner: element.winner ? 1 : 0,
+                        winnerToday: element.winner ? 1 : 0,
                         show: element.show ? 1 : 0,
+                        showToday: element.showToday ? 1 : 0,
                         joot: element.joot ? 1 : 0,
+                        jootToday: element.jootToday ? 1 : 0,
                         points: 0,
                         pay: element.pay,
                     }
@@ -547,8 +543,11 @@ app.controller('gameController', function ($scope) {
                         id: element.id,
                         name: element.name,
                         winner: element.winner ? 1 : 0,
+                        winnerToday: element.winner ? 1 : 0,
                         show: element.show ? 1 : 0,
+                        showToday: element.showToday ? 1 : 0,
                         joot: element.joot ? 1 : 0,
+                        jootToday: element.jootToday ? 1 : 0,
                         points: 0,
                         pay: element.pay,
                     }
@@ -588,17 +587,29 @@ app.controller('gameController', function ($scope) {
                     var player = game.data.dashboard.participants.filter(obj => obj.id == element.id);
                     if (player.length > 0) {
                         player = player[0];
+                        if (player.winnerToday == null)
+                            player.winnerToday = 0;
+                        if (player.showToday == null)
+                            player.showToday = 0;
+                        if (player.jootToday == null)
+                            player.jootToday = 0;
                         player.pay = element.pay;
                         player.winner = element.winner ? player.winner + 1 : player.winner;
+                        player.winnerToday = element.winner ? player.winnerToday + 1 : player.winnerToday;
                         player.show = element.show ? player.show + 1 : player.show;
+                        player.showToday = element.show ? player.showToday + 1 : player.showToday;
                         player.joot = element.joot ? player.joot + 1 : player.joot;
+                        player.jootToday = element.joot ? player.jootToday + 1 : player.jootToday;
                     } else {
                         var newPlayer = {
                             id: element.id,
                             name: element.name,
                             winner: element.winner ? 1 : 0,
+                            winnerToday: element.winnerToday ? 1 : 0,
                             show: element.show ? 1 : 0,
+                            showToday: element.showToday ? 1 : 0,
                             joot: element.joot ? 1 : 0,
+                            jootToday: element.jootToday ? 1 : 0,
                             points: 0,
                             pay: element.pay,
                         }
@@ -616,6 +627,35 @@ app.controller('gameController', function ($scope) {
             var date = new Date(element.date);
             if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
                 count++;
+                element.participants.forEach(win => {
+
+                    win.winnerToday = element.winnerToday ? element.winnerToday : 0;
+                    win.showToday = element.showToday ? element.showToday : 0;
+                    win.jootToday = element.jootToday ? element.jootToday : 0;
+
+                    var player = game.data.dashboard.participants.filter(obj => obj.id == win.id);
+                    if (player.length > 0) {
+                        player = player[0];
+                    }
+                    if (win.winner) {
+                        if (player.winnerToday == null) {
+                            player.winnerToday = 0;
+                        }
+                        player.winnerToday++;
+                    }
+                    if (win.show) {
+                        if (player.showToday == null) {
+                            player.showToday = 0;
+                        }
+                        player.showToday++;
+                    }
+                    if (win.joot) {
+                        if (player.jootToday == null) {
+                            player.jootToday = 0;
+                        }
+                        player.jootToday++;
+                    }
+                });
             }
         });
 
@@ -664,8 +704,6 @@ app.controller('gameController', function ($scope) {
     game.changeMultiplier = function () {
         if (game.data.multiplier == 2) {
             game.multiplierIntroAudio.play();
-        } else {
-            game.multiplierAudio.pause();
         }
     }
 
