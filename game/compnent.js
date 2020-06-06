@@ -41,6 +41,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
         },
     }
 
+    game.data.records.length = 10;
+
     var tick = function () {
         $scope.clock = Date.now();
     }
@@ -49,34 +51,35 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
     game.loadLocalData = function () {
 
-        // if ($window.localStorage.getItem("participants")) {
+        if ($window.localStorage.getItem("participants")) {
 
-        //     game.data.participants = JSON.parse($window.localStorage.getItem("participants"));
-        //     game.data.multiplierThreshold = JSON.parse($window.localStorage.getItem("multiplierThreshold"));
-        //     game.data.multiplier = JSON.parse($window.localStorage.getItem("multiplier"));
-        //     game.data.payinterval = JSON.parse($window.localStorage.getItem("payinterval"));
-        //     game.data.displayPayments = JSON.parse($window.localStorage.getItem("displayPayments"));
-        //     game.data.payments = JSON.parse($window.localStorage.getItem("payments"));
-        //     game.data.records = JSON.parse($window.localStorage.getItem("records"));
-        //     game.data.dashboard = JSON.parse($window.localStorage.getItem("dashboard"));
-        //     game.sounds = JSON.parse($window.localStorage.getItem("sounds"));
-        // }
+            game.data.participants = JSON.parse($window.localStorage.getItem("participants"));
+            game.data.multiplierThreshold = JSON.parse($window.localStorage.getItem("multiplierThreshold"));
+            game.data.multiplier = JSON.parse($window.localStorage.getItem("multiplier"));
+            game.data.payinterval = JSON.parse($window.localStorage.getItem("payinterval"));
+            game.data.displayPayments = JSON.parse($window.localStorage.getItem("displayPayments"));
+            game.data.payments = JSON.parse($window.localStorage.getItem("payments"));
+            game.data.records = JSON.parse($window.localStorage.getItem("records"));
+            game.data.dashboard = JSON.parse($window.localStorage.getItem("dashboard"));
+            game.sounds = JSON.parse($window.localStorage.getItem("sounds"));
+        }
     }
 
     game.updateLocalData = function () {
-        // try {
-        //     $window.localStorage.setItem("participants", JSON.stringify(game.data.participants));
-        //     $window.localStorage.setItem("multiplierThreshold", JSON.stringify(game.data.multiplierThreshold));
-        //     $window.localStorage.setItem("multiplier", JSON.stringify(game.data.multiplier));
-        //     $window.localStorage.setItem("displayPayments", JSON.stringify(game.data.displayPayments));
-        //     $window.localStorage.setItem("payments", JSON.stringify(game.data.payments));
-        //     $window.localStorage.setItem("records", JSON.stringify(game.data.records));
-        //     $window.localStorage.setItem("dashboard", JSON.stringify(game.data.dashboard));
-        //     $window.localStorage.setItem("sounds", JSON.stringify(game.sounds));
-        // }
-        // catch (e) {
-        //     alert("Local Storage is full, Changes will not be saved automatically");
-        // }
+        try {
+            $window.localStorage.setItem("participants", JSON.stringify(game.data.participants));
+            $window.localStorage.setItem("multiplierThreshold", JSON.stringify(game.data.multiplierThreshold));
+            $window.localStorage.setItem("multiplier", JSON.stringify(game.data.multiplier));
+            $window.localStorage.setItem("payinterval", JSON.stringify(game.data.payinterval));
+            $window.localStorage.setItem("displayPayments", JSON.stringify(game.data.displayPayments));
+            $window.localStorage.setItem("payments", JSON.stringify(game.data.payments));
+            $window.localStorage.setItem("records", JSON.stringify(game.data.records));
+            $window.localStorage.setItem("dashboard", JSON.stringify(game.data.dashboard));
+            $window.localStorage.setItem("sounds", JSON.stringify(game.sounds));
+        }
+        catch (e) {
+            alert("Local Storage is full, Changes will not be saved automatically");
+        }
     }
 
     game.resetData = function () {
@@ -111,6 +114,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
         game.data.participants.splice(index, 1);
         game.data.participants.splice(newIndex, 0, item);
+        game.updateLocalData();
     }
 
     game.movePlayerUp = function (item) {
@@ -121,16 +125,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
         game.data.participants.splice(index, 1);
         game.data.participants.splice(newIndex, 0, item);
-    }
-
-    game.payStatus = function (pay) {
-        if (pay <= -100) {
-            return "dotRed";
-        } else if (pay >= 100) {
-            return "dotGreen";
-        } else {
-            return "";
-        }
+        game.updateLocalData();
     }
 
     game.resetInput = function () {
@@ -144,42 +139,47 @@ app.controller('gameController', function ($scope, $interval, $window) {
     }
 
     game.deleteRecord = function (item) {
-        item.participants.forEach(oldplayer => {
-            var player = game.data.dashboard.participants.filter(obj => obj.id == oldplayer.id);
-            if (player.length > 0) {
-                player = player[0];
-                player.pay = oldplayer.pay;
-                if (oldplayer.show) {
-                    player.show = player.show > 0 ? player.show - 1 : 0;
-                }
-                if (oldplayer.winner) {
-                    player.winner = player.winner > 0 ? player.winner - 1 : 0;
-                }
-                if (oldplayer.joot) {
-                    player.joot = player.joot > 0 ? player.joot - 1 : 0;
-                }
-            }
-        });
-
-        if (item.multiplier && item.multiplier == 2 && game.data.dashboard.doublegame > 0) {
-            game.data.dashboard.doublegame--;
-        }
-
-        if (game.data.records.length > 0) {
-            var lastgame = game.data.records[1];
-            lastgame.participants.forEach(element => {
-                var lastplayer = game.data.dashboard.participants.filter(obj => obj.id == element.id);
-                if (lastplayer.length > 0) {
-                    lastplayer = lastplayer[0];
-                    lastplayer.pay = element.pay;
+        if (game.data.records.length > 1) {
+            item.participants.forEach(oldplayer => {
+                var player = game.data.dashboard.participants.filter(obj => obj.id == oldplayer.id);
+                if (player.length > 0) {
+                    player = player[0];
+                    player.pay = oldplayer.pay;
+                    if (oldplayer.show) {
+                        player.show = player.show > 0 ? player.show - 1 : 0;
+                    }
+                    if (oldplayer.winner) {
+                        player.winner = player.winner > 0 ? player.winner - 1 : 0;
+                    }
+                    if (oldplayer.joot) {
+                        player.joot = player.joot > 0 ? player.joot - 1 : 0;
+                    }
                 }
             });
+
+            if (item.multiplier && item.multiplier == 2 && game.data.dashboard.doublegame > 0) {
+                game.data.dashboard.doublegame--;
+            }
+
+            if (game.data.records.length > 0) {
+                var lastgame = game.data.records[1];
+                lastgame.participants.forEach(element => {
+                    var lastplayer = game.data.dashboard.participants.filter(obj => obj.id == element.id);
+                    if (lastplayer.length > 0) {
+                        lastplayer = lastplayer[0];
+                        lastplayer.pay = element.pay;
+                    }
+                });
+            }
+
+            game.data.dashboard.rounds = game.data.dashboard.rounds > 0 ? game.data.dashboard.rounds - 1 : 0;
+
+            game.data.records = game.data.records.filter(obj => obj !== item);
+            game.updateDashboard_updateRoundsToday();
+            game.updateLocalData();
+        } else {
+            alert("You cannot delete the last record. Please create a new game if necessary.");
         }
-
-        game.data.dashboard.rounds = game.data.dashboard.rounds > 0 ? game.data.dashboard.rounds - 1 : 0;
-
-        game.data.records = game.data.records.filter(obj => obj !== item);
-        game.updateDashboard_updateRoundsToday();
     }
 
     game.changeDealer = function (item) {
@@ -189,6 +189,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                 player.dealer = false;
             }
         });
+        game.updateLocalData();
     }
 
     game.autoChangeDealer = function () {
@@ -307,6 +308,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
                     initial.participants.push(player);
                 }
             }
+
+            game.updateLocalData();
         }
     }
 
@@ -316,10 +319,13 @@ app.controller('gameController', function ($scope, $interval, $window) {
         } else {
             player.active = true;
         }
+
+        game.updateLocalData();
     }
 
     game.closePayout = function (payment) {
         game.data.displayPayments = game.data.displayPayments.filter(obj => obj != payment);
+        game.updateLocalData();
     }
 
     game.download = function () {
@@ -337,35 +343,56 @@ app.controller('gameController', function ($scope, $interval, $window) {
     }
 
     $scope.selectPlayerImage = function (e) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            game.playeredit.image = e.target.result;
-            var player = game.data.participants.filter(obj => obj.id == game.playeredit.id);
-            var playerDash = game.data.dashboard.participants.filter(obj => obj.id == game.playeredit.id);
-            if (player.length > 0 && playerDash.length > 0) {
-                player = player[0];
-                player.image = game.playeredit.image;
-                playerDash = playerDash[0];
-                playerDash.image = game.playeredit.image;
-            }
-            $scope.$apply();
-        };
+        const fi = document.getElementById('imagefile');
+        // Check if any file is selected. 
+        if (fi.files.length > 0) {
+            const fsize = fi.files.item(0).size;
+            const file = Math.round((fsize / 1024));
+            // The size of the file. 
+            if (file >= 1024) {
+                alert("File too Big, please select a file less than 1mb");
+            } else {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    game.playeredit.image = e.target.result;
+                    var playerDash = game.data.dashboard.participants.filter(obj => obj.id == game.playeredit.id);
+                    if (playerDash.length > 0) {
+                        playerDash = playerDash[0];
+                        playerDash.image = game.playeredit.image;
+                    }
+                    game.updateLocalData();
+                    $scope.$apply();
+                };
 
-        reader.readAsDataURL(e.target.files[0]);
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        }
     }
 
     game.upload = function () {
         if (document.getElementById('file').files.length > 0) {
             var f = document.getElementById('file').files[0],
                 r = new FileReader();
-            // if (f.size / 1024 / 1024 < 5) {
-
-            // } else {
-            //     alert('Your file is too large. Please create another game');
-            // }
             r.onloadend = function (e) {
                 var data = e.target.result;
                 var parsedData = JSON.parse(data);
+                if (parsedData.records && parsedData.records.length > 10) {
+                    parsedData.records.length = 10;
+                }
+                parsedData.participants.forEach(element => {
+                    if (element.image) {
+                        delete element.image;
+                    }
+                });
+
+                parsedData.records.forEach(element => {
+                    element.participants.forEach(player => {
+                        if (player.image) {
+                            delete player.image;
+                        }
+                    });
+                });
+
                 game.data = parsedData;
 
                 game.updateDashboard_updateRoundsToday();
@@ -502,8 +529,14 @@ app.controller('gameController', function ($scope, $interval, $window) {
                     });
 
                     winner.pay = winnerPay * -1;
+                    var round = 0;
+                    if (game.data.records.length > 0) {
+                        var roundgame = game.data.records[0];
+                        if (!roundgame.round >= 0)
+                            round = roundgame.round + 1;
+                    }
                     var report = {
-                        round: game.data.records.length + 1,
+                        round: round,
                         multiplier: 1,
                         totalPoints: totalPoints,
                         participants: []
@@ -582,6 +615,9 @@ app.controller('gameController', function ($scope, $interval, $window) {
                                     }
                                     game.data.payments.push(paymentPay);
                                     game.data.payments.push(paymentReceive);
+                                    if (game.data.payments.length > 50) {
+                                        game.data.payments.pop();
+                                    }
                                     //Dashboard
                                     var dashboardPay = game.data.dashboard.participants.filter(obj => obj.id == paymentPay.user.id);
                                     if (dashboardPay.length > 0) {
@@ -601,6 +637,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
                     game.updateDashboard(report);
                     game.data.records.unshift(report);
+                    if (game.data.records.length > 10)
+                        game.data.records.pop();
 
                     //multiplier
                     if (game.data.multiplierThreshold > 0) {

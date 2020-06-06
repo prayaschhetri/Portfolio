@@ -392,7 +392,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="payment in game.data.payments | filter:game.filterPayments">
+                                        <tr ng-repeat="payment in game.data.payments | filter:game.filterPayments track by $index">
                                             <td>
                                                 {{payment.date | date}}
                                             </td>
@@ -432,10 +432,12 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input type="file" onchange="angular.element(this).scope().selectPlayerImage(event)" accept=".jpg" />
+                            <input type="file" id="imagefile" name="imagefile" onchange="angular.element(this).scope().selectPlayerImage(event)" accept=".jpg" />
+                            <!-- <input type="text" class="form-control" placeholder="Image Url" ng-model="game.playeredit.image"> -->
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <!-- <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="game.selectPlayerImage()">Save changes</button> -->
                         </div>
                     </div>
                 </div>
