@@ -48,7 +48,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
     $interval(tick, 1000);
 
     game.loadLocalData = function () {
-        
+
         // if ($window.localStorage.getItem("participants")) {
 
         //     game.data.participants = JSON.parse($window.localStorage.getItem("participants"));
@@ -427,6 +427,12 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         totalPoints += 5;
                     }
 
+                    //multiplier
+                    if (game.data.multiplier == 2) {
+                        game.data.dashboard.doublegame++;
+                        game.data.dashboard.doublegameToday++;
+                    }
+
                     game.data.participants.forEach(looser => {
                         if (looser.active == false) {
                             if (game.data.records != null && game.data.records.length > 0) {
@@ -564,8 +570,6 @@ app.controller('gameController', function ($scope, $interval, $window) {
                             }
                         });
                         if (multiplied) {
-                            game.data.dashboard.doublegame++;
-                            game.data.dashboard.doublegameToday++;
                             game.data.multiplier = 2;
                             if (game.sounds) {
                                 game.changeMultiplier();
@@ -692,7 +696,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                             player.showToday = 0;
                         if (player.jootToday == null)
                             player.jootToday = 0;
-                        if(player.paystatus == null)
+                        if (player.paystatus == null)
                             player.paystatus = '';
                         player.paystatus = player.pay < element.pay ? 'up' : (player.pay > element.pay ? 'down' : '');
                         player.pay = element.pay;
