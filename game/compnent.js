@@ -803,7 +803,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
     //Sounds
     game.changeMultiplier = function () {
-        if (game.data.multiplier == 2) {
+        if (game.data.multiplier == 2 && game.sounds) {
             game.multiplierIntroAudio.play();
         }
     }
