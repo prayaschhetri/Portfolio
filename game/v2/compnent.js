@@ -242,9 +242,9 @@ app.controller('gameController', function ($scope) {
         if(player.length > 0 && playerDash.length > 0)
         {
             player = player[0];
-            player.image = game.playeredit.image;
+            player.image = "file://" + game.playeredit.image;
             playerDash = playerDash[0];
-            playerDash.image = game.playeredit.image;
+            playerDash.image = "file://" + game.playeredit.image;
         }
 
         console.log(player);
