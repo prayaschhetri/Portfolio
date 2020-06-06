@@ -433,10 +433,11 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Player Image"
                                     ng-model="game.playeredit.image">
-                            </div>
+                            </div> -->
+                            <input type="file" onchange="angular.element(this).scope().selectPlayerImage(event)" />
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
