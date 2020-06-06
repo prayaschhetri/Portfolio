@@ -41,8 +41,6 @@ app.controller('gameController', function ($scope, $interval, $window) {
         },
     }
 
-    game.data.records.length = 10;
-
     var tick = function () {
         $scope.clock = Date.now();
     }
