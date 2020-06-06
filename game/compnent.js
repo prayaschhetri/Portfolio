@@ -629,6 +629,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         jootToday: element.jootToday ? 1 : 0,
                         points: 0,
                         pay: element.pay,
+                        paystatus: '',
                     }
                     game.data.dashboard.participants.push(player);
                 });
@@ -645,6 +646,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         jootToday: element.jootToday ? 1 : 0,
                         points: 0,
                         pay: element.pay,
+                        paystatus: '',
                     }
                     game.data.dashboard.participants.push(player);
                 });
@@ -688,6 +690,9 @@ app.controller('gameController', function ($scope, $interval, $window) {
                             player.showToday = 0;
                         if (player.jootToday == null)
                             player.jootToday = 0;
+                        if(player.paystatus == null)
+                            player.paystatus = '';
+                        player.paystatus = player.pay < element.pay ? 'up' : (player.pay > element.pay ? 'down' : '');
                         player.pay = element.pay;
                         player.winner = element.winner ? player.winner + 1 : player.winner;
                         player.winnerToday = element.winner ? player.winnerToday + 1 : player.winnerToday;
@@ -707,6 +712,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                             jootToday: element.jootToday ? 1 : 0,
                             points: 0,
                             pay: element.pay,
+                            paystatus: '',
                         }
                         game.data.dashboard.participants.push(newPlayer);
                     }

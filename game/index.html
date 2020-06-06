@@ -296,7 +296,10 @@
                                         <div class="statistic__item">
                                             <img ng-if="player.image" class="playerImage-dash" ng-src="{{player.image}}"
                                                 alt="Avatar">
-                                            <h2 class="number">{{player.pay}}</h2>
+                                            <h2 class="number">
+                                                {{player.pay}}<small ng-if="player.paystatus"><i ng-class="player.paystatus == 'up' ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
+                                                    style="{{player.paystatus == 'up' ? 'color:#28a745;' : 'color:#dc3545;'}} font-size:16px;"></i>
+                                            </small></i></h2>
                                             <span class="desc">{{player.name}}</span>
                                             <div>
                                                 Won: <span ng-if="player.winnerToday">{{player.winnerToday}} /</span>
@@ -308,9 +311,6 @@
                                                 <span
                                                     class="badge {{player.points < 0 ? 'badge-danger' : 'badge-success'}}">{{player.points | makePositive}}</span>
                                             </div>
-                                            <!-- <div class="icon">
-                                                <i class="fa fa-user"></i>
-                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
