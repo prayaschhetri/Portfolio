@@ -29,7 +29,7 @@
 </head>
 
 <body>
-    <div ng-controller="gameController as game">
+    <div ng-controller="gameController as game" ng-init="game.loadLocalData()">
         <div style="margin: 30px;">
             <div id="gameControl" class="row fade-in" ng-show="!game.viewReport">
                 <div class="col-md-4 form-group">
@@ -41,7 +41,7 @@
                             </h5>
                         </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12 form-group">
@@ -61,7 +61,7 @@
                                                 ng-click="game.download()">Save</button>
                                             <button class="btn btn-outline-secondary" type="button"
                                                 ng-if="game.data.records.length > 0"
-                                                ng-click="game.drawPlayerChart()">Report</button>
+                                                ng-click="game.resetData()">Reset</button>
                                         </div>
                                     </div>
                                     <div class="col-md-12 form-group">
@@ -217,7 +217,7 @@
                         <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#dashboard"
                             style="cursor: pointer;">
                             <h5 class="mb-0">
-                                Dashboard
+                                Dashboard <span class="float-sm-right">{{ clock  | date:'h:mm:ss a'}}</span>
                             </h5>
                         </div>
                         <div id="dashboard" class="collapse show">

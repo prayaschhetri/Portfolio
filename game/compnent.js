@@ -2,7 +2,7 @@ var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']).filter
     return function (num) { return Math.abs(num); }
 });;
 
-app.controller('gameController', function ($scope) {
+app.controller('gameController', function ($scope, $interval, $window) {
     var game = this;
     game.newPlayer = '';
     game.playerImage = '';
@@ -37,6 +37,62 @@ app.controller('gameController', function ($scope) {
             doublegame: 0,
             doublegameToday: 0,
         },
+    }
+
+    var tick = function () {
+        $scope.clock = Date.now();
+    }
+    tick();
+    $interval(tick, 1000);
+
+    game.loadLocalData = function () {
+        if ($window.localStorage.getItem("participants")) {
+
+            game.data.participants = JSON.parse($window.localStorage.getItem("participants"));
+            game.data.multiplierThreshold = JSON.parse($window.localStorage.getItem("multiplierThreshold"));
+            game.data.multiplier = JSON.parse($window.localStorage.getItem("multiplier"));
+            game.data.payinterval = JSON.parse($window.localStorage.getItem("payinterval"));
+            game.data.displayPayments = JSON.parse($window.localStorage.getItem("displayPayments"));
+            game.data.payments = JSON.parse($window.localStorage.getItem("payments"));
+            game.data.records = JSON.parse($window.localStorage.getItem("records"));
+            game.data.dashboard = JSON.parse($window.localStorage.getItem("dashboard"));
+            game.sounds = JSON.parse($window.localStorage.getItem("sounds"));
+        }
+    }
+
+    game.updateLocalData = function () {
+        $window.localStorage.setItem("participants", JSON.stringify(game.data.participants));
+        $window.localStorage.setItem("multiplierThreshold", JSON.stringify(game.data.multiplierThreshold));
+        $window.localStorage.setItem("multiplier", JSON.stringify(game.data.multiplier));
+        $window.localStorage.setItem("displayPayments", JSON.stringify(game.data.displayPayments));
+        $window.localStorage.setItem("payments", JSON.stringify(game.data.payments));
+        $window.localStorage.setItem("records", JSON.stringify(game.data.records));
+        $window.localStorage.setItem("dashboard", JSON.stringify(game.data.dashboard));
+        $window.localStorage.setItem("sounds", JSON.stringify(game.sounds));
+    }
+
+    game.resetData = function() {
+        $window.localStorage.clear();
+        game.data = {
+            participants: [],
+            multiplierThreshold: 25,
+            multiplier: 1,
+            payinterval: 50,
+            displayPayments: [],
+            payments: [],
+            records: [],
+            dashboard: {
+                rounds: 0,
+                roundsToday: 0,
+                highestPoint: 0,
+                highestPointPlayer: '',
+                participants: [],
+                highestPay: 0,
+                highestPayPlayer: '',
+                doublegame: 0,
+                doublegameToday: 0,
+            },
+        }
     }
 
     game.movePlayerDown = function (item) {
@@ -259,22 +315,35 @@ app.controller('gameController', function ($scope) {
         if (document.getElementById('file').files.length > 0) {
             var f = document.getElementById('file').files[0],
                 r = new FileReader();
-
-            r.onloadend = function (e) {
-                var data = e.target.result;
-                var parsedData = JSON.parse(data);
-                game.data = parsedData;
-
-                game.updateDashboard_updateRoundsToday();
-                game.data.dashboard.doublegameToday = 0;
-                if (game.data.dashboard.doublegame == null) {
-                    game.data.dashboard.doublegame = 0;
+            if (f.size/1024/1024 < 5) {
+                r.onloadend = function (e) {
+                    var data = e.target.result;
+                    var parsedData = JSON.parse(data);
+                    game.data = parsedData;
+    
+                    game.updateDashboard_updateRoundsToday();
+                    game.data.dashboard.doublegameToday = 0;
+                    if (game.data.dashboard.doublegame == null) {
+                        game.data.dashboard.doublegame = 0;
+                    }
+    
+                    $window.localStorage.setItem("participants", JSON.stringify(game.data.participants));
+                    $window.localStorage.setItem("multiplierThreshold", JSON.stringify(game.data.multiplierThreshold));
+                    $window.localStorage.setItem("multiplier", JSON.stringify(game.data.multiplier));
+                    $window.localStorage.setItem("payinterval", JSON.stringify(game.data.payinterval));
+                    $window.localStorage.setItem("displayPayments", JSON.stringify(game.data.displayPayments));
+                    $window.localStorage.setItem("payments", JSON.stringify(game.data.payments));
+                    $window.localStorage.setItem("records", JSON.stringify(game.data.records));
+                    $window.localStorage.setItem("dashboard", JSON.stringify(game.data.dashboard));
+                    $window.localStorage.setItem("sounds", JSON.stringify(game.sounds));
+    
+                    $scope.$apply();
                 }
-
-                $scope.$apply();
+    
+                r.readAsBinaryString(f);
+            } else {
+                alert('Your file is too large. Please create another game');
             }
-
-            r.readAsBinaryString(f);
         }
     }
 
@@ -513,6 +582,7 @@ app.controller('gameController', function ($scope) {
 
                     //Change Dealer
                     game.autoChangeDealer();
+                    game.updateLocalData();
 
 
                 } else {
