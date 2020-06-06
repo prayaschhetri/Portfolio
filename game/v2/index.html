@@ -137,8 +137,7 @@
                                                 <a class="dropdown-item" href=""
                                                     ng-click="game.movePlayerUp(player)">Move
                                                     Up</a>
-                                                <a class="dropdown-item" href="" ng-click="game.editPlayer(player)">Edit
-                                                    Player</a>
+                                                <a class="dropdown-item" href="" ng-click="game.editPlayer(player)">Change Picture</a>
                                             </div>
                                         </div>
                                     </div>
@@ -433,16 +432,10 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <!-- <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Player Image"
-                                    ng-model="game.playeredit.image">
-                            </div> -->
-                            <input type="file" onchange="angular.element(this).scope().selectPlayerImage(event)" />
+                            <input type="file" onchange="angular.element(this).scope().selectPlayerImage(event)" accept=".jpg" />
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                ng-click="game.saveEditPlayer()">Save changes</button>
                         </div>
                     </div>
                 </div>

@@ -236,17 +236,6 @@ app.controller('gameController', function ($scope) {
         element.modal('show');
     }
 
-    game.saveEditPlayer = function () {
-        // var player = game.data.participants.filter(obj => obj.id == game.playeredit.id);
-        // var playerDash = game.data.dashboard.participants.filter(obj => obj.id == game.playeredit.id);
-        // if (player.length > 0 && playerDash.length > 0) {
-        //     player = player[0];
-        //     player.image = game.playeredit.image;
-        //     playerDash = playerDash[0];
-        //     playerDash.image = game.playeredit.image;
-        // }
-    }
-
     $scope.selectPlayerImage = function (e) {
         var reader = new FileReader();
         reader.onload = function (e) {

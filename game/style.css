@@ -1,30 +1,9 @@
 .deleteButton {
-  text-align: center;
   cursor: pointer;
-  padding: 0;
+  display: inline-block;
 }
 .deleteButton:hover {
   background-color: #eeeeee;
-}
-
-.participants {
-  margin-bottom: 15px;
-}
-
-.dotRed {
-  height: 12px;
-  width: 12px;
-  background-color: #ff3535;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.dotGreen {
-  height: 12px;
-  width: 12px;
-  background-color: #67922f;
-  border-radius: 50%;
-  display: inline-block;
 }
 
 .payoutBanner {
@@ -105,4 +84,100 @@
   100% {
     color: #eeeeee;
   }
+}
+
+@keyframes ants {
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+.card-body {
+  padding: 10px !important;
+}
+
+.pointsDisplay {
+  font-size: 42px;
+  text-align: right;
+  white-space: nowrap;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: right !important;
+}
+
+.overview-item--c1 {
+  background-image: -moz-linear-gradient(90deg, #3f5efb 0%, #fc466b 100%);
+  background-image: -webkit-linear-gradient(90deg, #3f5efb 0%, #fc466b 100%);
+  background-image: -ms-linear-gradient(90deg, #3f5efb 0%, #fc466b 100%);
+}
+
+/* .dealer {
+  border: 1px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+    repeating-linear-gradient(
+        -45deg,
+        black 0,
+        black 25%,
+        transparent 0,
+        transparent 50%
+      )
+      0 / 0.6em 0.6em;
+  animation: ants 12s linear infinite;
+} */
+
+.dealer {
+  /* position: absolute;
+  width: 70px;
+  right: 50px;
+  margin-top: -24px;
+  z-index: 1;
+  transition: 1s ease-in-out; */
+  -webkit-box-shadow: 0px 0px 5px 5px rgba(255, 249, 130, 1);
+  -moz-box-shadow: 0px 0px 5px 5px rgba(255, 249, 130, 1);
+  box-shadow: 0px 0px 5px 5px rgba(255, 249, 130, 1);
+}
+
+.participants {
+  margin: 10px;
+}
+
+#participantsDiv {
+  max-height: 75vh;
+  overflow: auto;
+}
+
+.checkbox-lg .custom-control-label::before,
+.checkbox-lg .custom-control-label::after {
+  top: 0.8rem;
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.checkbox-lg .custom-control-label {
+  padding-top: 8px;
+  padding-left: 6px;
+  font-size: 22px;
+}
+
+.checkbox-xl .custom-control-label::before,
+.checkbox-xl .custom-control-label::after {
+  top: 1.2rem;
+  width: 1.85rem;
+  height: 1.85rem;
+}
+
+.checkbox-xl .custom-control-label {
+  padding-top: 17px;
+  padding-left: 10px;
+  font-size: 22px;
+}
+
+.playerImage-dash {
+  width: 6vw;
+  height: 6vw;
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  border-radius: 50%;
 }
