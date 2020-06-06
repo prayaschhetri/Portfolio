@@ -144,7 +144,42 @@ app.controller('gameController', function ($scope, $interval, $window) {
     }
 
     game.deleteRecord = function (item) {
+        item.participants.forEach(oldplayer => {
+            var player = game.data.dashboard.participants.filter(obj => obj.id == oldplayer.id);
+            if (player.length > 0) {
+                player = player[0];
+                player.pay = oldplayer.pay;
+                if(oldplayer.show) {
+                    player.show = player.show > 0 ? player.show - 1 : 0;
+                }
+                if(oldplayer.winner) {
+                    player.winner = player.winner > 0 ? player.winner - 1 : 0;
+                }
+                if(oldplayer.joot) {
+                    player.joot = player.joot > 0 ? player.joot - 1 : 0;
+                }
+            }
+        });
+
+        if(item.multiplier && item.multiplier == 2 && game.data.dashboard.doublegame > 0){
+            game.data.dashboard.doublegame--;
+        }
+
+        if (game.data.records.length > 0) {
+            var lastgame = game.data.records[1];
+            lastgame.participants.forEach(element => {
+                var lastplayer = game.data.dashboard.participants.filter(obj => obj.id == element.id);
+                if (lastplayer.length > 0) {
+                    lastplayer = lastplayer[0];
+                    lastplayer.pay = element.pay;
+                }
+            });
+        }
+
+        game.data.dashboard.rounds = game.data.dashboard.rounds > 0 ? game.data.dashboard.rounds - 1 : 0;
+
         game.data.records = game.data.records.filter(obj => obj !== item);
+        game.updateDashboard_updateRoundsToday();
     }
 
     game.changeDealer = function (item) {
@@ -468,8 +503,13 @@ app.controller('gameController', function ($scope, $interval, $window) {
                     winner.pay = winnerPay * -1;
                     var report = {
                         round: game.data.records.length + 1,
+                        multiplier: 1,
                         totalPoints: totalPoints,
                         participants: []
+                    }
+
+                    if (game.data.multiplier == 2) {
+                        report.multiplier = 2;
                     }
 
                     report.participants = angular.copy(game.data.participants);
@@ -730,10 +770,21 @@ app.controller('gameController', function ($scope, $interval, $window) {
     game.updateDashboard_updateRoundsToday = function () {
         const today = new Date()
         var count = 0;
+        var doublegameCount = 0;
+        game.data.dashboard.doublegameToday = 0;
+        game.data.dashboard.participants.forEach(item => {
+            item.winnerToday = 0;
+            item.showToday = 0;
+            item.jootToday = 0;
+        });
+
         game.data.records.forEach(element => {
             var date = new Date(element.date);
             if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
                 count++;
+                if(element.multiplier && element.multiplier == 2){
+                    doublegameCount++;
+                }
                 element.participants.forEach(win => {
 
                     win.winnerToday = element.winnerToday ? element.winnerToday : 0;
@@ -767,6 +818,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
         });
 
         game.data.dashboard.roundsToday = count;
+        game.data.dashboard.doublegameToday = doublegameCount;
     }
 
     game.updateDashboard_updateHighestPoint = function () {
