@@ -98,10 +98,11 @@ app.controller('gameController', function ($scope) {
             dealer = dealer[0];
 
         if (dealer != null) {
-            var index = game.data.participants.indexOf(dealer);
-            var nextDealer = game.data.participants[index + 1];
+            var participants = game.data.participants.filter(obj => obj.active == true);
+            var index = participants.indexOf(dealer);
+            var nextDealer = participants[index + 1];
             if (nextDealer == null) {
-                nextDealer = game.data.participants[0];
+                nextDealer = participants[0];
             }
             nextDealer.dealer = true;
             game.data.participants.forEach(player => {
@@ -723,8 +724,6 @@ app.controller('gameController', function ($scope) {
         game.data.dashboard.highestPay = pay;
         game.data.dashboard.highestPayPlayer = player;
     }
-
-
 
     //Sounds
     game.changeMultiplier = function () {
