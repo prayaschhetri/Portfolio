@@ -149,19 +149,19 @@ app.controller('gameController', function ($scope, $interval, $window) {
             if (player.length > 0) {
                 player = player[0];
                 player.pay = oldplayer.pay;
-                if(oldplayer.show) {
+                if (oldplayer.show) {
                     player.show = player.show > 0 ? player.show - 1 : 0;
                 }
-                if(oldplayer.winner) {
+                if (oldplayer.winner) {
                     player.winner = player.winner > 0 ? player.winner - 1 : 0;
                 }
-                if(oldplayer.joot) {
+                if (oldplayer.joot) {
                     player.joot = player.joot > 0 ? player.joot - 1 : 0;
                 }
             }
         });
 
-        if(item.multiplier && item.multiplier == 2 && game.data.dashboard.doublegame > 0){
+        if (item.multiplier && item.multiplier == 2 && game.data.dashboard.doublegame > 0) {
             game.data.dashboard.doublegame--;
         }
 
@@ -358,27 +358,28 @@ app.controller('gameController', function ($scope, $interval, $window) {
         if (document.getElementById('file').files.length > 0) {
             var f = document.getElementById('file').files[0],
                 r = new FileReader();
-            if (f.size / 1024 / 1024 < 5) {
-                r.onloadend = function (e) {
-                    var data = e.target.result;
-                    var parsedData = JSON.parse(data);
-                    game.data = parsedData;
+            // if (f.size / 1024 / 1024 < 5) {
 
-                    game.updateDashboard_updateRoundsToday();
-                    game.data.dashboard.doublegameToday = 0;
-                    if (game.data.dashboard.doublegame == null) {
-                        game.data.dashboard.doublegame = 0;
-                    }
+            // } else {
+            //     alert('Your file is too large. Please create another game');
+            // }
+            r.onloadend = function (e) {
+                var data = e.target.result;
+                var parsedData = JSON.parse(data);
+                game.data = parsedData;
 
-                    game.updateLocalData();
-
-                    $scope.$apply();
+                game.updateDashboard_updateRoundsToday();
+                game.data.dashboard.doublegameToday = 0;
+                if (game.data.dashboard.doublegame == null) {
+                    game.data.dashboard.doublegame = 0;
                 }
 
-                r.readAsBinaryString(f);
-            } else {
-                alert('Your file is too large. Please create another game');
+                game.updateLocalData();
+
+                $scope.$apply();
             }
+
+            r.readAsBinaryString(f);
         }
     }
 
@@ -782,7 +783,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
             var date = new Date(element.date);
             if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
                 count++;
-                if(element.multiplier && element.multiplier == 2){
+                if (element.multiplier && element.multiplier == 2) {
                     doublegameCount++;
                 }
                 element.participants.forEach(win => {
