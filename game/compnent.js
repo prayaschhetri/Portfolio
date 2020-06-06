@@ -12,7 +12,9 @@ app.controller('gameController', function ($scope, $interval, $window) {
     game.viewReport = false;
     game.filterPayments = '';
     game.winnerAudio = new Audio("sounds/winner.wav");
+    game.winnerAudio.preload = "auto";
     game.multiplierIntroAudio = new Audio("sounds/doublegameInro.wav");
+    game.multiplierIntroAudio.preload = "auto";
     //game.multiplierAudio = new Audio("sounds/doublegame.wav");
     //game.multiplierAudio.loop = true;
     game.highestPointAudio = new Audio("sounds/highestPoint.wav");
