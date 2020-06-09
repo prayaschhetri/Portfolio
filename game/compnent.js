@@ -60,6 +60,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
             game.data.records = JSON.parse($window.localStorage.getItem("records"));
             game.data.dashboard = JSON.parse($window.localStorage.getItem("dashboard"));
             game.sounds = JSON.parse($window.localStorage.getItem("sounds"));
+
+            game.updateDashboard_updateRoundsToday();
         }
     }
 
@@ -374,8 +376,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
             r.onloadend = function (e) {
                 var data = e.target.result;
                 var parsedData = JSON.parse(data);
-                if (parsedData.records && parsedData.records.length > 10) {
-                    parsedData.records.length = 10;
+                if (parsedData.records && parsedData.records.length > 100) {
+                    parsedData.records.length = 100;
                 }
                 parsedData.participants.forEach(element => {
                     if (element.image) {
@@ -635,7 +637,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
                     game.updateDashboard(report);
                     game.data.records.unshift(report);
-                    if (game.data.records.length > 10)
+                    if (game.data.records.length > 100)
                         game.data.records.pop();
 
                     //multiplier
