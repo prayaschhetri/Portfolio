@@ -337,7 +337,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
     }
 
     game.editPlayer = function (player) {
-        game.playeredit = player;
+        game.playeredit = angular.copy(player);
         var element = angular.element('#playerModal');
         element.modal('show');
     }
