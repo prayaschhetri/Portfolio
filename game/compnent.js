@@ -548,7 +548,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                                         winnerPoint = 3;
                                     }
                                     total = totalPoints + winnerPoint;
-                                    looser.pay = ((game.data.participants.length * looser.points) - total) * game.data.multiplier;
+                                    looser.pay = ((activePlayers.length * looser.points) - total) * game.data.multiplier;
                                     winnerPay += looser.pay;
                                 }
                             }
