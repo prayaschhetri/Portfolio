@@ -300,9 +300,10 @@
                                             <h2 class="number">
                                                 {{player.pay}}<small ng-if="player.paystatus"><i ng-class="player.paystatus == 'up' ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
                                                     style="{{player.paystatus == 'up' ? 'color:#28a745;' : 'color:#dc3545;'}} font-size:16px;"></i>
+                                                    <span style="font-size: 20px;">{{player.payPivot}}</span>
                                             </small></i></h2>
                                             <span class="desc">{{player.name}}</span>
-                                            <div>
+                                            <div style="font-size: 2.0vh;">
                                                 Won: <span ng-if="player.winnerToday">{{player.winnerToday}} /</span>
                                                 {{player.winner}}<br>
                                                 Shown: <span ng-if="player.showToday">{{player.showToday}} /</span>
@@ -343,7 +344,7 @@
                                             <td style="font-size: 24px; text-align:right;">
                                                 <div class="deleteButton" ng-if="$index === 0"
                                                     ng-click="game.deleteRecord(item)">
-                                                    <i class="fa fa-close"></i>
+                                                    <i style="font-size: 12px;" class="fa fa-close"></i>
                                                 </div>{{item.round}}
                                             </td>
                                             <td ng-repeat="player in item.participants | orderBy:'id'"
