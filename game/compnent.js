@@ -794,7 +794,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
 
                 //participants
-                report.participants.forEach(element => {
+                var activePlayers = report.participants.filter(obj => obj.active == true);
+                activePlayers.forEach(element => {
                     var player = game.data.dashboard.participants.filter(obj => obj.id == element.id);
                     if (player.length > 0) {
                         player = player[0];
