@@ -1,4 +1,4 @@
-var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable']).filter('makePositive', function () {
+var app = angular.module("gameApp", ['ngPatternRestrict', 'ui.sortable', 'ngAnimate']).filter('makePositive', function () {
     return function (num) { return Math.abs(num); }
 });;
 
@@ -133,6 +133,11 @@ app.controller('gameController', function ($scope, $interval, $window) {
             player.show = false;
             player.joot = false;
             player.pay = 0;
+        });
+
+        game.data.dashboard.participants.forEach(player => {
+            player.currentPay = null;
+            player.currentPoints = null;
         });
     }
 
@@ -507,8 +512,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
 
         var result = confirm("Are you sure you want to submit?");
         if (result) {
-            var payout = false;
-            var payusers = [];
+            // var payout = false;
+            // var payusers = [];
             var activePlayers = game.data.participants.filter(obj => obj.active == true);
             if (activePlayers.length > 1) {
                 var totalPoints = 0;
@@ -712,7 +717,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         game.autoChangeDealer();
                         game.updateLocalData();
 
-
+                        console.log(game.data.dashboard.participants);
+                        console.log(game.data.participants);
                     } else {
                         alert("Invalid Winner");
                     }
@@ -886,6 +892,8 @@ app.controller('gameController', function ($scope, $interval, $window) {
                 //participants
                 var activePlayers = report.participants.filter(obj => obj.active == true);
                 activePlayers.forEach(element => {
+                    var mainPlayer = game.data.participants.filter(obj => obj.id === element.id);
+                        mainPlayer = mainPlayer[0];
                     var player = game.data.dashboard.participants.filter(obj => obj.id == element.id);
                     if (player.length > 0) {
                         player = player[0];
@@ -905,7 +913,11 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         player.showToday = element.show ? player.showToday + 1 : player.showToday;
                         player.joot = element.joot ? player.joot + 1 : player.joot;
                         player.jootToday = element.joot ? player.jootToday + 1 : player.jootToday;
-                        player.payPivot = player.payPivot ? player.payPivot : element.pay;
+                        player.currentPay = mainPlayer.pay;
+                        player.currentPoints = mainPlayer.points ? mainPlayer.points : 0;
+                        player.currentShow = mainPlayer.show;
+                        player.currentJoot = mainPlayer.joot;
+                        player.currentWinner = mainPlayer.winner;
                     } else {
                         var newPlayer = {
                             id: element.id,
@@ -919,7 +931,12 @@ app.controller('gameController', function ($scope, $interval, $window) {
                             points: 0,
                             pay: element.pay,
                             paystatus: '',
-                            payPivot: element.pay
+                            payPivot: element.pay,
+                            currentPay: mainPlayer.pay,
+                            currentPoints: mainPlayer.points ? mainPlayer.points : 0,
+                            currentShow: mainPlayer.show,
+                            currentJoot: mainPlayer.joot,
+                            currentWinner: mainPlayer.winner,
                         }
                         game.data.dashboard.participants.push(newPlayer);
                     }
