@@ -156,11 +156,11 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         }
                     }
                 });
-    
+
                 if (item.multiplier && item.multiplier == 2 && game.data.dashboard.doublegame > 0) {
                     game.data.dashboard.doublegame--;
                 }
-    
+
                 if (game.data.records.length > 0) {
                     var lastgame = game.data.records[1];
                     lastgame.participants.forEach(element => {
@@ -171,9 +171,9 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         }
                     });
                 }
-    
+
                 game.data.dashboard.rounds = game.data.dashboard.rounds > 0 ? game.data.dashboard.rounds - 1 : 0;
-    
+
                 game.data.records = game.data.records.filter(obj => obj !== item);
                 game.autoChangeDealer_Previous();
                 game.updateDashboard_updateRoundsToday();
@@ -287,11 +287,26 @@ app.controller('gameController', function ($scope, $interval, $window) {
                 show: false,
                 joot: false,
                 points: null,
-                pay: 0,
+                pay: initialpoints,
                 dealer: false,
                 active: true,
             }
+            const dashPlayer = {
+                id: game.data.participants.length + 1,
+                name: name,
+                winner: 0,
+                winnerToday: 0,
+                show: 0,
+                showToday: 0,
+                joot: 0,
+                jootToday: 0,
+                points: 0,
+                pay: initialpoints,
+                paystatus: '',
+                payPivot: 0,
+            }
             game.data.participants.push(newPlayer);
+            game.data.dashboard.participants.push(dashPlayer);
             game.newPlayer = '';
             game.initialPoint = 0;
 
@@ -491,7 +506,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
     game.calculate = function () {
 
         var result = confirm("Are you sure you want to submit?");
-        if (result){
+        if (result) {
             var payout = false;
             var payusers = [];
             var activePlayers = game.data.participants.filter(obj => obj.active == true);
@@ -503,7 +518,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         totalPoints += item.points
                     }
                 });
-    
+
                 //Dealer
                 var dealer = game.data.participants.filter(obj => obj.dealer === true && obj.active === true);
                 if (dealer.length > 0) {
@@ -515,13 +530,13 @@ app.controller('gameController', function ($scope, $interval, $window) {
                         if (winner.joot) {
                             totalPoints += 5;
                         }
-    
+
                         //multiplier
                         if (game.data.multiplier == 2) {
                             game.data.dashboard.doublegame++;
                             game.data.dashboard.doublegameToday++;
                         }
-    
+
                         game.data.participants.forEach(looser => {
                             if (looser.active == false) {
                                 if (game.data.records != null && game.data.records.length > 0) {
@@ -553,7 +568,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
                                 }
                             }
                         });
-    
+
                         winner.pay = winnerPay * -1;
                         var round = 0;
                         if (game.data.records.length > 0) {
@@ -567,13 +582,13 @@ app.controller('gameController', function ($scope, $interval, $window) {
                             totalPoints: totalPoints,
                             participants: []
                         }
-    
+
                         if (game.data.multiplier == 2) {
                             report.multiplier = 2;
                         }
-    
+
                         report.participants = angular.copy(game.data.participants);
-    
+
                         if (game.data.records && game.data.records.length > 0) {
                             var lastGame = game.data.records[0];
                             if (lastGame) {
@@ -584,93 +599,97 @@ app.controller('gameController', function ($scope, $interval, $window) {
                                             if (lastPlayer != null && lastPlayer.length > 0) {
                                                 lastPlayer = lastPlayer[0];
                                                 currentPlayer.pay = currentPlayer.pay + lastPlayer.pay;
-    
-                                                if (currentPlayer.pay <= (game.data.payinterval * -1)) {
-                                                    payout = true;
-                                                    payusers.push(currentPlayer);
-                                                    currentPlayer.pay = currentPlayer.pay + game.data.payinterval;
-                                                }
+
+                                                // if (currentPlayer.pay <= (game.data.payinterval * -1)) {
+                                                //     payout = true;
+                                                //     payusers.push(currentPlayer);
+                                                //     currentPlayer.pay = currentPlayer.pay + game.data.payinterval;
+                                                // }
                                             }
                                         }
                                     }
                                 });
                             }
                         }
-    
+
                         report.date = Date.now();
+
+                        game.settlePayments(report);
                         //payments
-                        if (game.data.payinterval > 0) {
-                            if (payout == true && payusers.length > 0) {
-                                payusers.forEach(payuser => {
-                                    //get receiving player
-                                    highestPoint = 0;
-                                    highestPointUser = null;
-                                    report.participants.forEach(user => {
-                                        if (user.pay > highestPoint) {
-                                            highestPoint = user.pay;
-                                            highestPointUser = user;
-                                        }
-                                    });
-    
-                                    if (highestPointUser != null) {
-                                        highestPointUser.pay = highestPointUser.pay - game.data.payinterval;
-                                        var displayPayment = {
-                                            pay: payuser,
-                                            receive: highestPointUser,
-                                        }
-                                        game.data.displayPayments.push(displayPayment);
-                                        if (game.sounds) {
-                                            setTimeout(() => {
-                                                game.paymentAudio.play();
-                                            }, 2000);
-                                        }
-                                        var paymentPay = {
-                                            round: report.round,
-                                            user: payuser,
-                                            points: (game.data.payinterval * -1),
-                                            date: Date.now()
-                                        }
-                                        var paymentReceive = {
-                                            round: report.round,
-                                            user: highestPointUser,
-                                            points: game.data.payinterval,
-                                            date: Date.now()
-                                        }
-                                        if (game.data.payments == null || game.data.payments == undefined) {
-                                            game.data.payments = [];
-                                        }
-                                        game.data.payments.push(paymentPay);
-                                        game.data.payments.push(paymentReceive);
-                                        if (game.data.payments.length > 50) {
-                                            game.data.payments.pop();
-                                        }
-                                        //Dashboard
-                                        var dashboardPay = game.data.dashboard.participants.filter(obj => obj.id == paymentPay.user.id);
-                                        if (dashboardPay.length > 0) {
-                                            dashboardPay = dashboardPay[0];
-                                            dashboardPay.points += paymentPay.points;
-                                        }
-                                        var dashboardReceive = game.data.dashboard.participants.filter(obj => obj.id == paymentReceive.user.id);
-                                        if (dashboardReceive.length > 0) {
-                                            dashboardReceive = dashboardReceive[0];
-                                            dashboardReceive.points += paymentReceive.points;
-                                        }
-                                        game.updateDashboard_updateHighestPay();
-                                    }
-                                });
-                            }
-                        }
-    
+                        // if (game.data.payinterval > 0) {
+                        //     if (payout == true && payusers.length > 0) {
+                        //         payusers.forEach(payuser => {
+                        //             //get receiving player
+                        //             highestPoint = 0;
+                        //             highestPointUser = null;
+                        //             report.participants.forEach(user => {
+                        //                 if (user.pay > highestPoint) {
+                        //                     highestPoint = user.pay;
+                        //                     highestPointUser = user;
+                        //                 }
+                        //             });
+
+                        //             if (highestPointUser != null) {
+                        //                 highestPointUser.pay = highestPointUser.pay - game.data.payinterval;
+                        //                 var displayPayment = {
+                        //                     pay: payuser,
+                        //                     receive: highestPointUser,
+                        //                 }
+                        //                 game.data.displayPayments.push(displayPayment);
+                        //                 if (game.sounds) {
+                        //                     setTimeout(() => {
+                        //                         game.paymentAudio.play();
+                        //                     }, 2000);
+                        //                 }
+                        //                 var paymentPay = {
+                        //                     round: report.round,
+                        //                     user: payuser,
+                        //                     points: (game.data.payinterval * -1),
+                        //                     date: Date.now()
+                        //                 }
+                        //                 var paymentReceive = {
+                        //                     round: report.round,
+                        //                     user: highestPointUser,
+                        //                     points: game.data.payinterval,
+                        //                     date: Date.now()
+                        //                 }
+                        //                 if (game.data.payments == null || game.data.payments == undefined) {
+                        //                     game.data.payments = [];
+                        //                 }
+                        //                 game.data.payments.push(paymentPay);
+                        //                 game.data.payments.push(paymentReceive);
+                        //                 if (game.data.payments.length > 50) {
+                        //                     game.data.payments.pop();
+                        //                 }
+                        //                 //Dashboard
+                        //                 var dashboardPay = game.data.dashboard.participants.filter(obj => obj.id == paymentPay.user.id);
+                        //                 if (dashboardPay.length > 0) {
+                        //                     dashboardPay = dashboardPay[0];
+                        //                     dashboardPay.points += paymentPay.points;
+                        //                 }
+                        //                 var dashboardReceive = game.data.dashboard.participants.filter(obj => obj.id == paymentReceive.user.id);
+                        //                 if (dashboardReceive.length > 0) {
+                        //                     dashboardReceive = dashboardReceive[0];
+                        //                     dashboardReceive.points += paymentReceive.points;
+                        //                 }
+                        //                 game.updateDashboard_updateHighestPay();
+                        //             }
+                        //         });
+                        //     }
+                        // }
+
                         game.updateDashboard(report);
                         game.data.records.unshift(report);
                         if (game.data.records.length > 100)
                             game.data.records.pop();
-    
+
                         //multiplier
                         if (game.data.multiplierThreshold > 0) {
                             var multiplied = false;
                             game.data.participants.forEach(player => {
                                 if (player.points >= game.data.multiplierThreshold) {
+                                    multiplied = true;
+                                } else if (player.joot && player.points + 5 >= game.data.multiplierThreshold) {
                                     multiplied = true;
                                 }
                             });
@@ -688,12 +707,12 @@ app.controller('gameController', function ($scope, $interval, $window) {
                                 }
                             }
                         }
-    
+
                         //Change Dealer
                         game.autoChangeDealer();
                         game.updateLocalData();
-    
-    
+
+
                     } else {
                         alert("Invalid Winner");
                     }
@@ -702,7 +721,78 @@ app.controller('gameController', function ($scope, $interval, $window) {
                 }
             } else {
                 alert("There must be at least two active players");
-            }   
+            }
+        }
+    }
+
+    game.settlePayments = function (report) {
+        if (game.data.payinterval > 0) {
+            //get receiving player
+            highestPoint = 0;
+            highestPointUser = null;
+            report.participants.forEach(highestPlayer => {
+                if (highestPlayer.pay > highestPoint) {
+                    highestPoint = highestPlayer.pay;
+                    highestPointUser = highestPlayer;
+                }
+            });
+
+            if (highestPointUser != null) {
+                var player_pay = report.participants.filter(obj => obj.pay <= (game.data.payinterval * -1));
+                if (player_pay.length > 0) {
+                    player_pay = player_pay[0];
+                    player_pay.pay = player_pay.pay + game.data.payinterval;
+                    highestPointUser.pay = highestPointUser.pay - game.data.payinterval;
+
+                    var displayPayment = {
+                        pay: player_pay,
+                        receive: highestPointUser,
+                    }
+                    game.data.displayPayments.push(displayPayment);
+                    if (game.data.payments == null || game.data.payments == undefined) {
+                        game.data.payments = [];
+                    }
+                    var paymentPay = {
+                        round: report.round,
+                        user: player_pay,
+                        points: (game.data.payinterval * -1),
+                        date: Date.now()
+                    }
+                    var paymentReceive = {
+                        round: report.round,
+                        user: highestPointUser,
+                        points: game.data.payinterval,
+                        date: Date.now()
+                    }
+                    game.data.payments.push(paymentPay);
+                    game.data.payments.push(paymentReceive);
+
+                    //Dashboard
+                    var dashboardPay = game.data.dashboard.participants.filter(obj => obj.id == player_pay.id);
+                    if (dashboardPay.length > 0) {
+                        dashboardPay = dashboardPay[0];
+                        dashboardPay.points -= game.data.payinterval;
+                    }
+                    var dashboardReceive = game.data.dashboard.participants.filter(obj => obj.id == highestPointUser.id);
+                    if (dashboardReceive.length > 0) {
+                        dashboardReceive = dashboardReceive[0];
+                        dashboardReceive.points += game.data.payinterval;
+                    }
+
+                    if (game.sounds) {
+                        setTimeout(() => {
+                            game.paymentAudio.play();
+                        }, 2000);
+                    }
+                }
+            }
+
+            game.updateDashboard_updateHighestPay();
+
+            var next_player_pay = report.participants.filter(obj => obj.pay <= (game.data.payinterval * -1));
+            if (next_player_pay.length > 0) {
+                game.settlePayments(report);
+            }
         }
     }
 
@@ -890,7 +980,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
         game.data.dashboard.roundsToday = count;
         game.data.dashboard.doublegameToday = doublegameCount;
 
-        if(count == 0){
+        if (count == 0) {
             //pay pivot
             game.data.dashboard.participants.forEach(player => {
                 player.payPivot = player.pay;
@@ -918,7 +1008,7 @@ app.controller('gameController', function ($scope, $interval, $window) {
         var pay = 0;
         var player = '';
         game.data.dashboard.participants.forEach(element => {
-            if (element.points >= pay) {
+            if (element.points > 0 && element.points >= pay) {
                 pay = element.points;
                 player = element.name;
             }
